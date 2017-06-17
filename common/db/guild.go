@@ -8,3 +8,9 @@ type Guild struct {
 	Type byte
 	Introduce string
 }
+
+const guildCName = "guild"
+
+func (g *Guild) GetById(id bsos.ObjectId) error {
+	return db.FindOneById(guildCName, id, g)
+}

@@ -1,0 +1,6 @@
+<h1>Editing {{.Name}}</h1>
+
+<form action="/save/{{.Id}}" method="post">
+	<textarea name="introduce">{{print .Introduce}}</textarea>
+	<input type="submit" value="Save">
+</form>
