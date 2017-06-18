@@ -70,3 +70,17 @@ func UpdateOne(cname string, id bson.ObjectId, data interface{}) error {
 	}
 	return nil
 }
+
+func FindMany(cname string, bm bson.M, data interface{}) error {
+	session, err := mgo.Dial(mongoUrl)
+	if err != nil {
+		return err
+	}
+	defer session.Close()
+
+	c := session.DB(dbName).C(cname)
+	if err := c.Find(bm).All(data); err != nil {
+		return err
+	}
+	return nil
+}
