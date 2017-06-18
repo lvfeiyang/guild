@@ -1,27 +1,52 @@
 package main
 
 import (
-	"log"
+	// "log"
 	"net/http"
 	"html/template"
 	"github.com/lvfeiyang/guild/common/db"
+	"github.com/lvfeiyang/guild/common/flog"
+	"github.com/lvfeiyang/guild/common/config"
 	"gopkg.in/mgo.v2/bson"
 )
 
-func main() {
-	http.HandleFunc("/guild/edit", guildEditHandler)
+var htmlPath = "C:\\Users\\lxm19\\workspace\\go\\src\\github.com\\lvfeiyang\\guild\\"
 
-	log.Fatal(http.ListenAndServe(":7777", nil))
+func main() {
+	flog.Init()
+	config.Init()
+	// session.Init()
+	db.Init()
+
+	http.HandleFunc("/guild/edit/", guildEditHandler)
+	http.HandleFunc("/guild/save/", guildSaveHandler)
+
+	flog.LogFile.Fatal(http.ListenAndServe(":80", nil))
 }
 func guildEditHandler(w http.ResponseWriter, r *http.Request)  {
-	if t, err := template.ParseFiles("html/guild-edit.html"); err != nil {
-		log.Println(err)
+	if t, err := template.ParseFiles(htmlPath+"html\\guild-edit.html"); err != nil {
+		flog.LogFile.Println(err)
 	} else {
 		id := r.URL.Path[len("/guild/edit/"):]
 		g := db.Guild{}
-		(&g).GetById(bson.ObjectIdHex(id))
-		if err := t.Execute(w, g); err != nil {
-			log.Println(err)
+		if bson.IsObjectIdHex(id) {
+			(&g).GetById(bson.ObjectIdHex(id))
+		}
+		view := struct {
+			Id string
+			Name string
+			Introduce string
+		}{g.Id.Hex(), g.Name, g.Introduce}
+		if err := t.Execute(w, view); err != nil {
+			flog.LogFile.Println(err)
 		}
 	}
+}
+func guildSaveHandler(w http.ResponseWriter, r *http.Request)  {
+	introduce := r.FormValue("introduce")
+	g := db.Guild{Name:"test", Introduce:introduce}
+	if err := g.Save(); err != nil {
+		flog.LogFile.Println(err)
+	}
+	// http.Redirect(w, r, "")
 }

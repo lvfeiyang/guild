@@ -1,4 +1,4 @@
-import db
+package db
 
 import "gopkg.in/mgo.v2/bson"
 
@@ -9,3 +9,5 @@ type Apply struct {
 	ApplyTime int64
 	DeadLine int64
 }
+
+const applyCName = "apply"

@@ -1,4 +1,4 @@
-import db
+package db
 
 import "gopkg.in/mgo.v2/bson"
 
@@ -7,3 +7,5 @@ type Member struct {
 	Mobile string
 	Guild bson.ObjectId
 }
+
+const memberCName = "member"

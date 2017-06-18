@@ -2,7 +2,7 @@ package config
 
 import (
 	"encoding/json"
-	"github.com/lvfeiyang/ss/common/flog"
+	"github.com/lvfeiyang/guild/common/flog"
 	"io/ioutil"
 	"runtime"
 )
@@ -11,6 +11,7 @@ type config struct {
 	ConnectType string
 	RedisUrl    string
 	MongoUrl    string
+	HtmlPath string
 }
 
 var ConfigVal = &config{}

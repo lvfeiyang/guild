@@ -3,8 +3,8 @@ package session
 import (
 	"errors"
 	"github.com/go-redis/redis"
-	"github.com/lvfeiyang/ss/common/config"
-	"github.com/lvfeiyang/ss/common/flog"
+	"github.com/lvfeiyang/guild/common/config"
+	"github.com/lvfeiyang/guild/common/flog"
 	"gopkg.in/mgo.v2/bson"
 	"math/rand"
 	"strconv"

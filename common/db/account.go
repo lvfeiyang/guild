@@ -16,9 +16,6 @@ func (ac *Account) Save() error {
 func (ac *Account) GetByMobile(mobile string) error {
 	return FindOne(accountCName, bson.M{"mobile": mobile}, ac)
 }
-func (ac *Account) ChangePwd() error {
-	return UpdateOne(accountCName, ac.Id, bson.M{"$set": bson.M{"pwd": ac.Pwd}})
-}
 func (ac *Account) GetById(id bson.ObjectId) error {
 	return FindOneById(accountCName, id, ac)
 }

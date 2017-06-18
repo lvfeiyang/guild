@@ -1,12 +1,13 @@
 package db
 
 import (
-	"github.com/lvfeiyang/ss/common/config"
+	"github.com/lvfeiyang/guild/common/config"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
-	// "github.com/lvfeiyang/ss/common/flog"
+	// "github.com/lvfeiyang/guild/common/flog"
 )
 
+const dbName = "guild"
 // const mongoUrl = "mongodb://xm:784826@10.0.75.1:27017"
 var mongoUrl string
 
@@ -22,7 +23,7 @@ func Create(cname string, data interface{}) error {
 	}
 	defer session.Close()
 
-	c := session.DB("ss").C(cname)
+	c := session.DB(dbName).C(cname)
 	err = c.Insert(data)
 	if err != nil {
 		return err
@@ -37,7 +38,7 @@ func FindOne(cname string, bm bson.M, data interface{}) error {
 	}
 	defer session.Close()
 
-	c := session.DB("ss").C(cname)
+	c := session.DB(dbName).C(cname)
 	if err := c.Find(bm).One(data); err != nil {
 		return err
 	}
@@ -50,7 +51,7 @@ func FindOneById(cname string, id bson.ObjectId, data interface{}) error {
 	}
 	defer session.Close()
 
-	c := session.DB("ss").C(cname)
+	c := session.DB(dbName).C(cname)
 	if err := c.FindId(id).One(data); err != nil {
 		return err
 	}
@@ -63,7 +64,7 @@ func UpdateOne(cname string, id bson.ObjectId, data interface{}) error {
 	}
 	defer session.Close()
 
-	c := session.DB("ss").C(cname)
+	c := session.DB(dbName).C(cname)
 	if err := c.UpdateId(id, data); err != nil {
 		return err
 	}
