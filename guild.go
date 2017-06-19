@@ -40,19 +40,21 @@ func guildEditHandler(w http.ResponseWriter, r *http.Request)  {
 		}{g.Id.Hex(), g.Name, g.Introduce}
 		if err := t.Execute(w, view); err != nil {
 			flog.LogFile.Println(err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 	}
 }
 func guildSaveHandler(w http.ResponseWriter, r *http.Request)  {
 	id := r.URL.Path[len("/guild/edit/"):]
+	name := r.FormValue("name")
 	introduce := r.FormValue("introduce")
 	if bson.IsObjectIdHex(id) {
-		g := &db.Guild{Id:bson.ObjectIdHex(id), Introduce:introduce}
+		g := &db.Guild{Id:bson.ObjectIdHex(id), Name:name, Introduce:introduce}
 		if err := g.UpdateById(); err != nil {
 			flog.LogFile.Println(err)
 		}
 	} else {
-		g := &db.Guild{Name:"test", Introduce:introduce}
+		g := &db.Guild{Name:name, Introduce:introduce}
 		if err := g.Save(); err != nil {
 			flog.LogFile.Println(err)
 		}
@@ -64,6 +66,7 @@ func guildListHandler(w http.ResponseWriter, r *http.Request) {
 		flog.LogFile.Println(err)
 	} else {
 		var view []struct {
+			Name string
 			Introduce string
 		}
 		gs, err := db.FindAllGuilds()
@@ -71,9 +74,8 @@ func guildListHandler(w http.ResponseWriter, r *http.Request) {
 			flog.LogFile.Println(err)
 		}
 		for _, v := range gs {
-			view = append(view, struct{Introduce string}{v.Introduce})
+			view = append(view, struct{Name string, Introduce string}{v.Name, v.Introduce})
 		}
-		flog.LogFile.Println(view)
 		if err := t.Execute(w, view); err != nil {
 			flog.LogFile.Println(err)
 		}

@@ -1,5 +1,6 @@
 <h1>Guild list</h1>
 
 <ul>
-	{{range .}}<li>{{.Introduce}}</li>{{else}}no guild{{end}}
+	{{range .}}<li>{{.Name}} {{.Introduce}} <a href="/guild/edit/{{.Id}}">edit</a></li>{{else}}no guild{{end}}
+	<li><a href="/guild/edit/0">add new</a></li>
 </ul>
