@@ -22,6 +22,18 @@ func main() {
 	http.HandleFunc("/guild/save/", guildSaveHandler)
 	http.HandleFunc("/guild/list", guildListHandler)
 
+	http.HandleFunc("/member/edit/", memberEditHandler)
+	http.HandleFunc("/member/save/", memberSaveHandler)
+	http.HandleFunc("/member/list/", memberListHandler)
+
+	http.HandleFunc("/task/edit/", taskEditHandler)
+	http.HandleFunc("/task/save/", taskSaveHandler)
+	http.HandleFunc("/task/list/", taskListHandler)
+
+	http.HandleFunc("/apply/edit/", applyEditHandler)
+	http.HandleFunc("/apply/save/", applySaveHandler)
+	http.HandleFunc("/apply/list/", applyListHandler)
+
 	flog.LogFile.Fatal(http.ListenAndServe(":80", nil))
 }
 func guildEditHandler(w http.ResponseWriter, r *http.Request)  {
@@ -65,16 +77,18 @@ func guildListHandler(w http.ResponseWriter, r *http.Request) {
 	if t, err := template.ParseFiles(htmlPath+"html\\guild-list.html"); err != nil {
 		flog.LogFile.Println(err)
 	} else {
-		var view []struct {
+		type oneView struct {
+			Id string
 			Name string
 			Introduce string
 		}
+		var view []oneView
 		gs, err := db.FindAllGuilds()
 		if err != nil {
 			flog.LogFile.Println(err)
 		}
 		for _, v := range gs {
-			view = append(view, struct{Name string, Introduce string}{v.Name, v.Introduce})
+			view = append(view, oneView{v.Id.Hex(), v.Name, v.Introduce})
 		}
 		if err := t.Execute(w, view); err != nil {
 			flog.LogFile.Println(err)
