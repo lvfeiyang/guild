@@ -1,6 +1,41 @@
-<h1>Guild list</h1>
+<!-- <h1>Guild list</h1>
 
 <ul>
 	{{range .}}<li>{{.Name}} {{.Introduce}} <a href="/guild/edit/{{.Id}}">edit</a></li>{{else}}no guild{{end}}
 	<li><a href="/guild/edit/0">add new</a></li>
-</ul>
+</ul> -->
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="">
+		<meta name="author" content="">
+
+		<title>Guild</title>
+
+		<!-- Bootstrap -->
+		<link href="css/bootstrap.min.css" rel="stylesheet">
+	</head>
+	<body>
+		<div class="container-fluid">
+			<div class="row">
+				<div>
+					<ul class="nav nav-sidebar">
+						{{range .}}
+						<li>{{.Name}} <a href="/guild/edit/{{.Id}}">edit</a></li>
+						{{else}}no guild
+						{{end}}
+						<li><a href="/guild/edit/0">add new</a></li>
+					</ul>
+				</div>
+				<div>
+				</div>
+			</div>
+		</div>
+		<script src="js/jquery-3.2.1.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+	</body>
+</html>

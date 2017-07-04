@@ -18,6 +18,9 @@ func main() {
 	// session.Init()
 	db.Init()
 
+	http.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir(htmlPath+"html\\js"))))
+	http.Handle("/css/", http.StripPrefix("/js/", http.FileServer(http.Dir(htmlPath+"html\\css"))))
+
 	http.HandleFunc("/guild/edit/", guildEditHandler)
 	http.HandleFunc("/guild/save/", guildSaveHandler)
 	http.HandleFunc("/guild/list", guildListHandler)
