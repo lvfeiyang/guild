@@ -21,7 +21,7 @@ func Init() {
 	if "linux" == runtime.GOOS {
 		filePath = "/root/guild/config"
 	} else {
-		filePath = "C:\\Users\\lxm19\\config"
+		filePath = "C:\\Users\\Administrator\\config"  //lxm19
 	}
 	conf, err := ioutil.ReadFile(filePath)
 	if err != nil {

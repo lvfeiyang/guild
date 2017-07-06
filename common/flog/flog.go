@@ -13,7 +13,7 @@ func Init() {
 	if "linux" == runtime.GOOS {
 		filePath = "/root/guild/log"
 	} else {
-		filePath = "C:\\Users\\lxm19\\log"
+		filePath = "C:\\Users\\Administrator\\log"
 	}
 	file, err := os.OpenFile(filePath, os.O_RDWR|os.O_APPEND|os.O_CREATE, 0644)
 	if err != nil {

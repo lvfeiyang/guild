@@ -1,44 +1,73 @@
 package main
 
 import (
-	// "log"
 	"net/http"
 	"html/template"
 	"github.com/lvfeiyang/guild/common/db"
 	"github.com/lvfeiyang/guild/common/flog"
 	"github.com/lvfeiyang/guild/common/config"
 	"gopkg.in/mgo.v2/bson"
+	"path/filepath"
 )
 
-var htmlPath = "C:\\Users\\lxm19\\workspace\\go\\src\\github.com\\lvfeiyang\\guild\\"
+var htmlPath string
 
 func main() {
 	flog.Init()
 	config.Init()
 	// session.Init()
 	db.Init()
+	htmlPath = config.ConfigVal.HtmlPath // E:\leonshare\go-workspace\src\github.com\lvfeiyang
 
-	http.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir(htmlPath+"html\\js"))))
-	http.Handle("/css/", http.StripPrefix("/js/", http.FileServer(http.Dir(htmlPath+"html\\css"))))
+	// var jsFiles, cssFiles string
+	// if "linux" == runtime.GOOS {
+	// 	jsFiles, cssFiles = htmlPath+"sfk/js", htmlPath+"sfk/css"
+	// } else {
+	// 	jsFiles, cssFiles = htmlPath+"sfk\\js", htmlPath+"sfk\\css"
+	// }
+	jsFiles, cssFiles := filepath.Join(htmlPath, "sfk", "js"), filepath.Join(htmlPath, "sfk", "css")
+	gcssFiles := filepath.Join(htmlPath, "guild", "html", "css")
+	http.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir(jsFiles))))
+	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir(cssFiles))))
+	http.Handle("/guild-css/", http.StripPrefix("/guild-css/", http.FileServer(http.Dir(gcssFiles))))
 
-	http.HandleFunc("/guild/edit/", guildEditHandler)
-	http.HandleFunc("/guild/save/", guildSaveHandler)
-	http.HandleFunc("/guild/list", guildListHandler)
+	http.HandleFunc("/guild", guildHandler)
 
-	http.HandleFunc("/member/edit/", memberEditHandler)
-	http.HandleFunc("/member/save/", memberSaveHandler)
-	http.HandleFunc("/member/list/", memberListHandler)
 
-	http.HandleFunc("/task/edit/", taskEditHandler)
-	http.HandleFunc("/task/save/", taskSaveHandler)
-	http.HandleFunc("/task/list/", taskListHandler)
-
-	http.HandleFunc("/apply/edit/", applyEditHandler)
-	http.HandleFunc("/apply/save/", applySaveHandler)
-	http.HandleFunc("/apply/list/", applyListHandler)
+	// http.HandleFunc("/guild/edit/", guildEditHandler)
+	// http.HandleFunc("/guild/save/", guildSaveHandler)
+	// http.HandleFunc("/guild/list", guildListHandler)
+	//
+	// http.HandleFunc("/member/edit/", memberEditHandler)
+	// http.HandleFunc("/member/save/", memberSaveHandler)
+	// http.HandleFunc("/member/list/", memberListHandler)
+	//
+	// http.HandleFunc("/task/edit/", taskEditHandler)
+	// http.HandleFunc("/task/save/", taskSaveHandler)
+	// http.HandleFunc("/task/list/", taskListHandler)
+	//
+	// http.HandleFunc("/apply/edit/", applyEditHandler)
+	// http.HandleFunc("/apply/save/", applySaveHandler)
+	// http.HandleFunc("/apply/list/", applyListHandler)
 
 	flog.LogFile.Fatal(http.ListenAndServe(":80", nil))
 }
+func guildHandler(w http.ResponseWriter, r *http.Request)  {
+	paths := []string{
+		filepath.Join(htmlPath, "guild", "html", "guild.html"),
+		filepath.Join(htmlPath, "guild", "html", "sidebar.tmpl"),
+		filepath.Join(htmlPath, "guild", "html", "main.tmpl"),
+	}
+	if t, err := template.ParseFiles(paths...); err != nil {
+		flog.LogFile.Println(err)
+	} else {
+		if err := t.Execute(w, nil); err != nil {
+			flog.LogFile.Println(err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+	}
+}
+
 func guildEditHandler(w http.ResponseWriter, r *http.Request)  {
 	if t, err := template.ParseFiles(htmlPath+"html\\guild-edit.html"); err != nil {
 		flog.LogFile.Println(err)
