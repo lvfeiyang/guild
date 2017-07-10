@@ -6,6 +6,7 @@ import (
 	"github.com/lvfeiyang/guild/common/db"
 	"github.com/lvfeiyang/guild/common/flog"
 	"github.com/lvfeiyang/guild/common/config"
+	"github.com/lvfeiyang/guild/message"
 	"gopkg.in/mgo.v2/bson"
 	"path/filepath"
 )
@@ -27,12 +28,14 @@ func main() {
 	// }
 	jsFiles, cssFiles := filepath.Join(htmlPath, "sfk", "js"), filepath.Join(htmlPath, "sfk", "css")
 	gcssFiles := filepath.Join(htmlPath, "guild", "html", "css")
+	gjsFiles := filepath.Join(htmlPath, "guild", "html", "js")
 	http.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir(jsFiles))))
 	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir(cssFiles))))
 	http.Handle("/guild-css/", http.StripPrefix("/guild-css/", http.FileServer(http.Dir(gcssFiles))))
+	http.Handle("/guild-js/", http.StripPrefix("/guild-js/", http.FileServer(http.Dir(gjsFiles))))
 
 	http.HandleFunc("/guild", guildHandler)
-
+	http.HandleFunc("/msg/", &message.Message{})//guild-save
 
 	// http.HandleFunc("/guild/edit/", guildEditHandler)
 	// http.HandleFunc("/guild/save/", guildSaveHandler)
@@ -57,6 +60,7 @@ func guildHandler(w http.ResponseWriter, r *http.Request)  {
 		filepath.Join(htmlPath, "guild", "html", "guild.html"),
 		filepath.Join(htmlPath, "guild", "html", "sidebar.tmpl"),
 		filepath.Join(htmlPath, "guild", "html", "main.tmpl"),
+		filepath.Join(htmlPath, "guild", "html", "edit-guild.tmpl"),
 	}
 	if t, err := template.ParseFiles(paths...); err != nil {
 		flog.LogFile.Println(err)
