@@ -42,7 +42,7 @@ func (req *RegisterReq) Handle(sess *session.Session) ([]byte, error) {
 	}
 	pwdH := sha3.Sum256([]byte(req.Pwd))
 	pwdHH := hex.EncodeToString(pwdH[:])
-	ac = &db.Account{NickName: req.NickName, Pwd: pwdHH, Head: req.Head, Mobile: sess.Mobile}
+	ac = &db.Account{Pwd: pwdHH, Mobile: sess.Mobile}
 	if err := ac.Save(); err != nil {
 		return nil, err
 	}

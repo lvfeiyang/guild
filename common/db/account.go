@@ -5,6 +5,7 @@ import "gopkg.in/mgo.v2/bson"
 type Account struct {
 	Id        bson.ObjectId `bson:"_id,omitempty"`
 	Mobile    string
+	Pwd string
 }
 
 const accountCName = "account"

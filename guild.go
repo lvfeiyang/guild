@@ -34,8 +34,9 @@ func main() {
 	http.Handle("/guild-css/", http.StripPrefix("/guild-css/", http.FileServer(http.Dir(gcssFiles))))
 	http.Handle("/guild-js/", http.StripPrefix("/guild-js/", http.FileServer(http.Dir(gjsFiles))))
 
+	http.Handle("/msg/", &message.Message{})//guild-save
+
 	http.HandleFunc("/guild", guildHandler)
-	http.HandleFunc("/msg/", &message.Message{})//guild-save
 
 	// http.HandleFunc("/guild/edit/", guildEditHandler)
 	// http.HandleFunc("/guild/save/", guildSaveHandler)

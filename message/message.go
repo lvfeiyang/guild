@@ -18,7 +18,7 @@ type Message struct {
 }
 
 func (msg *Message) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	msg.Name = r.URL.Path[1:] + "-req"//strings.TrimLeft(r.URL.Path, "/") + "-req"
+	msg.Name = r.URL.Path[len("/msg/"):] + "-req"//strings.TrimLeft(r.URL.Path, "/") + "-req"
 	if cookie, err := r.Cookie(session.CookieKey); err != nil {
 		flog.LogFile.Println(err)
 	} else {
@@ -48,29 +48,11 @@ func (msg *Message) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 		}
-		w.Write(httpFormat(sendMsg))
-		// w.Write([]byte(sendMsg.Data))
+		w.Write([]byte(sendMsg.Data))
 	} else {
 		// IDEA: form表单需整合为json
 		return
 	}
-}
-func httpFormat(msg *Message) []byte {
-	format := struct {
-		Code    uint32
-		Message string
-		Data    string
-	}{}
-	if 0 == strings.Compare("error-msg", msg.Name) {
-		err := &ErrorMsg{}
-		err.Decode([]byte(msg.Data))
-		format.Code = err.ErrCode
-		format.Message = err.ErrMsg
-	} else {
-		format.Data = msg.Data
-	}
-	sendData, _ := json.Marshal(format)
-	return sendData
 }
 
 func (msg *Message) Decode(data []byte) error {
@@ -87,11 +69,6 @@ type msgHandleIF interface {
 }
 
 func deCrypto(msgData []byte, sess *session.Session) ([]byte, error) {
-	/* sess = &session.Session{}
-	if err := sess.Get(sessId); err != nil {
-		// flog.LogFile.Println(err)
-		return nil, err
-	}*/
 	recvEn := make([]byte, hex.DecodedLen(len(msgData)))
 	n, err := hex.Decode(recvEn, msgData)
 	if err != nil {
@@ -138,6 +115,8 @@ func (msg *Message) HandleMsg() *Message {
 		}
 	}
 	switch msg.Name {
+	case "guild-save-req":
+		return handleOneMsg(&GuildSaveReq{}, []byte(msg.Data), sess)
 	case "apply-session-req":
 		return handleOneMsg(&ApplySessionReq{}, []byte(msg.Data), sess)
 	case "get-n-req":

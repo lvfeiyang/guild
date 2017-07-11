@@ -1,23 +1,26 @@
 $('#editGuild').on('show.bs.modal', function (event) {
-	var button = $(event.relatedTarget)
-	var guildId = button.data('guild-id')
+	var button = $(event.relatedTarget);
+	var guildId = button.data('guild-id');
 	//ajax here
-	var modal = $(this)
-	modal.find('.modal-footer .btn-primary').attr('onclick', "saveGuild("+guildId+")")//"saveGuild("+guildId+")")
+	var modal = $(this);
+	modal.find('.modal-footer .btn-primary').attr('onclick', "saveGuild('"+guildId+"')");//"saveGuild("+guildId+")")
 })
 function saveGuild(guildId)
 {
-	var modal = $(this)
+	var modal = $(this);
+	var data = {
+		Id:guildId,
+		Name:$('#editGuild .modal-body #guild-name').val(),
+		Introduce:$('#editGuild .modal-body #guild-introduce').val()
+	};
 	$.ajax({
-		data:{
-			name:modal.find('.modal-body #guild-name').val()
-			introduce:modal.find('.modal-body #guild-introduce').val()
-		}
+		url:'/msg/guild-save',
+		contentType: 'application/json',
+		data:JSON.stringify(data),
 		type:'post',
 		dataType:'json',
-		url:'/guild/save/'+guildId,
 		success:function(data) {
-
+			$('#editGuild').modal('hide');
 		}
 	});
 }
