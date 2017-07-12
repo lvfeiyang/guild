@@ -6,8 +6,9 @@
 	</span>
 </div>
 <ul class="nav nav-sidebar">
-	<li class="active"><a href="#">sddf</a></li>
-	<li><a href="#">ss</a></li>
+	{{range .}}
+	<li><a href="#" onclick="showOnRight({{.Id}})">{{.Name}}</a></li>
+	{{end}}
 	<li><a href="#" data-toggle="modal" data-target="#editGuild" data-guild-id="0">添加工会</a></li>
 </ul>
 {{end}}

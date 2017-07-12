@@ -38,7 +38,7 @@ func (req *GuildSaveReq) Handle(sess *session.Session) ([]byte, error) {
 			return nil, err
 		}
 	}
-	rsp := &LoginRsp{true}
+	rsp := &GuildSaveRsp{true}
 	if rspJ, err := rsp.Encode(); err != nil {
 		return nil, err
 	} else {

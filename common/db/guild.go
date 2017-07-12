@@ -27,3 +27,6 @@ func FindAllGuilds() ([]Guild, error) {
 	err := FindMany(guildCName, bson.M{}, &gs)
 	return gs, err
 }
+func DelGuildById(id bson.ObjectId) error {
+	return DeleteOne(guildCName, id)
+}

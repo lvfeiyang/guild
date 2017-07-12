@@ -84,3 +84,16 @@ func FindMany(cname string, bm bson.M, data interface{}) error {
 	}
 	return nil
 }
+func DeleteOne(cname string, id bson.ObjectId) error {
+	session, err := mgo.Dial(mongoUrl)
+	if err != nil {
+		return err
+	}
+	defer session.Close()
+
+	c := session.DB(dbName).C(cname)
+	if err := c.RemoveId(id); err != nil {
+		return err
+	}
+	return nil
+}

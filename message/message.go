@@ -117,6 +117,10 @@ func (msg *Message) HandleMsg() *Message {
 	switch msg.Name {
 	case "guild-save-req":
 		return handleOneMsg(&GuildSaveReq{}, []byte(msg.Data), sess)
+	case "guild-info-req":
+		return handleOneMsg(&GuildInfoReq{}, []byte(msg.Data), sess)
+	case "guild-delete-req":
+		return handleOneMsg(&GuildDeleteReq{}, []byte(msg.Data), sess)
 	case "apply-session-req":
 		return handleOneMsg(&ApplySessionReq{}, []byte(msg.Data), sess)
 	case "get-n-req":
