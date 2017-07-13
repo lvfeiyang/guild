@@ -4,8 +4,8 @@
 		<ul class="nav nav-pills pull-right">
 			<li role="presentation"><a href="#" data-toggle="modal" data-target="#editGuild" data-guild-id={{.Id}}>编辑</a></li>
 			<li role="presentation"><a href="#" onclick="deleteGuild({{.Id}})">删除</a></li>
-			<li role="presentation"><a href="#">添加成员</a></li>
-			<li role="presentation"><a href="#">添加任务</a></li>
+			<li role="presentation"><a href="#" data-toggle="modal" data-target="#editMember" data-member-id="0">添加成员</a></li>
+			<li role="presentation"><a href="#" data-toggle="modal" data-target="#editTask" data-task-id="0">添加任务</a></li>
 		</ul>
 	</nav>
 	<span class="hidden">{{.Id}}</span>
@@ -18,6 +18,7 @@
 	</ul>
 </nav>
 <div class="table-responsive">
-	<!-- {{template "table"}} -->
+	<!-- {{template "task-table"}} -->
+	<!-- {{template "member-table"}} -->
 </div>
 {{end}}

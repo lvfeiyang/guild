@@ -121,6 +121,18 @@ func (msg *Message) HandleMsg() *Message {
 		return handleOneMsg(&GuildInfoReq{}, []byte(msg.Data), sess)
 	case "guild-delete-req":
 		return handleOneMsg(&GuildDeleteReq{}, []byte(msg.Data), sess)
+	case "task-save-req":
+		return handleOneMsg(&TaskSaveReq{}, []byte(msg.Data), sess)
+	case "task-info-req":
+		return handleOneMsg(&TaskInfoReq{}, []byte(msg.Data), sess)
+	case "task-delete-req":
+		return handleOneMsg(&TaskDeleteReq{}, []byte(msg.Data), sess)
+	case "member-save-req":
+		return handleOneMsg(&MemberSaveReq{}, []byte(msg.Data), sess)
+	case "member-info-req":
+		return handleOneMsg(&MemberInfoReq{}, []byte(msg.Data), sess)
+	case "member-delete-req":
+		return handleOneMsg(&MemberDeleteReq{}, []byte(msg.Data), sess)
 	case "apply-session-req":
 		return handleOneMsg(&ApplySessionReq{}, []byte(msg.Data), sess)
 	case "get-n-req":

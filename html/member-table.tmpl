@@ -1,0 +1,23 @@
+{{define "member-table"}}
+<table class="table table-striped">
+	<thead>
+		<tr>
+			{{range .Thead}}
+			<th>{{.}}</th>
+			{{end}}
+		</tr>
+	</thead>
+	<tbody>
+		{{range .Tbody}}
+		<tr>
+			<td>{{.Id}}</td>
+			<td>{{.Mobile}}</td>
+			<td>
+				<a href="#" data-toggle="modal" data-target="#editMember" data-member-id={{.Id}}><span class="glyphicon glyphicon-pencil"></span></a>
+				<a href="#" onclick="deleteMember({{.Id}})"><span class="glyphicon glyphicon-remove"></span></a>
+			</td>
+		</tr>
+		{{end}}
+	</tbody>
+</table>
+{{end}}
