@@ -2,8 +2,8 @@ package message
 
 import (
 	"encoding/json"
-	"github.com/lvfeiyang/guild/common/session"
 	"github.com/lvfeiyang/guild/common/db"
+	"github.com/lvfeiyang/guild/common/session"
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -37,8 +37,8 @@ func (req *MemberInfoReq) Handle(sess *session.Session) ([]byte, error) {
 }
 
 type MemberSaveReq struct {
-	Id string
-	Mobile string
+	Id      string
+	Mobile  string
 	GuildId string
 }
 type MemberSaveRsp struct {
@@ -56,12 +56,12 @@ func (rsp *MemberSaveRsp) Encode() ([]byte, error) {
 }
 func (req *MemberSaveReq) Handle(sess *session.Session) ([]byte, error) {
 	if bson.IsObjectIdHex(req.Id) {
-		m := &db.Member{Id:bson.ObjectIdHex(req.Id), Mobile:req.Mobile, GuildId:req.GuildId}
+		m := &db.Member{Id: bson.ObjectIdHex(req.Id), Mobile: req.Mobile, GuildId: req.GuildId}
 		if err := m.UpdateById(); err != nil {
 			return nil, err
 		}
 	} else {
-		m := &db.Member{Mobile:req.Mobile, GuildId:req.GuildId}
+		m := &db.Member{Mobile: req.Mobile, GuildId: req.GuildId}
 		if err := m.Save(); err != nil {
 			return nil, err
 		}

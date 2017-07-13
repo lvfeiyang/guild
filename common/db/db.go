@@ -8,6 +8,7 @@ import (
 )
 
 const dbName = "guild"
+
 // const mongoUrl = "mongodb://xm:784826@10.0.75.1:27017"
 var mongoUrl string
 

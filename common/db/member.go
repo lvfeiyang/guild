@@ -3,8 +3,8 @@ package db
 import "gopkg.in/mgo.v2/bson"
 
 type Member struct {
-	Id bson.ObjectId `bson:"_id,omitempty"`
-	Mobile string
+	Id      bson.ObjectId `bson:"_id,omitempty"`
+	Mobile  string
 	GuildId string
 }
 
@@ -19,7 +19,7 @@ func (m *Member) UpdateById() error {
 }
 func FindAllMembers(gId string) ([]Member, error) {
 	var ms []Member
-	err := FindMany(memberCName, bson.M{"guildid":gId}, &ms)
+	err := FindMany(memberCName, bson.M{"guildid": gId}, &ms)
 	return ms, err
 }
 func (m *Member) GetById(id bson.ObjectId) error {

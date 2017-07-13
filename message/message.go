@@ -18,7 +18,7 @@ type Message struct {
 }
 
 func (msg *Message) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	msg.Name = r.URL.Path[len("/msg/"):] + "-req"//strings.TrimLeft(r.URL.Path, "/") + "-req"
+	msg.Name = r.URL.Path[len("/msg/"):] + "-req" //strings.TrimLeft(r.URL.Path, "/") + "-req"
 	if cookie, err := r.Cookie(session.CookieKey); err != nil {
 		flog.LogFile.Println(err)
 	} else {

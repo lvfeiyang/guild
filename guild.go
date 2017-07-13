@@ -1,14 +1,14 @@
 package main
 
 import (
-	"net/http"
-	"html/template"
+	"github.com/lvfeiyang/guild/common/config"
 	"github.com/lvfeiyang/guild/common/db"
 	"github.com/lvfeiyang/guild/common/flog"
-	"github.com/lvfeiyang/guild/common/config"
 	"github.com/lvfeiyang/guild/message"
-	"path/filepath"
 	"gopkg.in/mgo.v2/bson"
+	"html/template"
+	"net/http"
+	"path/filepath"
 	"strconv"
 )
 
@@ -30,7 +30,7 @@ func main() {
 	http.Handle("/guild-css/", http.StripPrefix("/guild-css/", http.FileServer(http.Dir(gcssFiles))))
 	http.Handle("/guild-js/", http.StripPrefix("/guild-js/", http.FileServer(http.Dir(gjsFiles))))
 
-	http.Handle("/msg/", &message.Message{})//guild-save
+	http.Handle("/msg/", &message.Message{}) //guild-save
 
 	http.HandleFunc("/guild", guildHandler)
 	http.HandleFunc("/guild/detail", guildDetailHandler)
@@ -39,13 +39,13 @@ func main() {
 
 	flog.LogFile.Fatal(http.ListenAndServe(":80", nil))
 }
-func guildHandler(w http.ResponseWriter, r *http.Request)  {
+func guildHandler(w http.ResponseWriter, r *http.Request) {
 	paths := []string{
 		filepath.Join(htmlPath, "guild", "html", "guild.html"),
 		filepath.Join(htmlPath, "guild", "html", "sidebar.tmpl"),
-		filepath.Join(htmlPath, "guild", "html", "main.tmpl"),
-		filepath.Join(htmlPath, "guild", "html", "task-table.tmpl"),
-		filepath.Join(htmlPath, "guild", "html", "member-table.tmpl"),
+		// filepath.Join(htmlPath, "guild", "html", "main.tmpl"),
+		// filepath.Join(htmlPath, "guild", "html", "task-table.tmpl"),
+		// filepath.Join(htmlPath, "guild", "html", "member-table.tmpl"),
 		filepath.Join(htmlPath, "guild", "html", "edit-guild.tmpl"),
 		filepath.Join(htmlPath, "guild", "html", "edit-task.tmpl"),
 		filepath.Join(htmlPath, "guild", "html", "edit-member.tmpl"),
@@ -55,7 +55,7 @@ func guildHandler(w http.ResponseWriter, r *http.Request)  {
 	} else {
 		var view struct {
 			GuildList []struct {
-				Id string
+				Id   string
 				Name string
 			}
 		}
@@ -64,7 +64,7 @@ func guildHandler(w http.ResponseWriter, r *http.Request)  {
 			flog.LogFile.Println(err)
 		}
 		for _, v := range gs {
-			view.GuildList = append(view.GuildList, struct{Id, Name string}{v.Id.Hex(), v.Name})
+			view.GuildList = append(view.GuildList, struct{ Id, Name string }{v.Id.Hex(), v.Name})
 		}
 		//t.ExecuteTemplate(w, "sidebar", struct{GuildList []oneViewGuild}{viewGuildList})
 		if err := t.Execute(w, view); err != nil {
@@ -76,8 +76,8 @@ func guildHandler(w http.ResponseWriter, r *http.Request)  {
 func guildDetailHandler(w http.ResponseWriter, r *http.Request) {
 	paths := []string{
 		filepath.Join(htmlPath, "guild", "html", "main.tmpl"),
-		filepath.Join(htmlPath, "guild", "html", "task-table.tmpl"),
-		filepath.Join(htmlPath, "guild", "html", "member-table.tmpl"),
+		// filepath.Join(htmlPath, "guild", "html", "task-table.tmpl"),
+		// filepath.Join(htmlPath, "guild", "html", "member-table.tmpl"),
 	}
 	if t, err := template.ParseFiles(paths...); err != nil {
 		flog.LogFile.Println(err)
@@ -91,8 +91,8 @@ func guildDetailHandler(w http.ResponseWriter, r *http.Request) {
 			(&g).GetById(bson.ObjectIdHex(id))
 		}
 		view := struct {
-			Id string
-			Name string
+			Id        string
+			Name      string
 			Introduce string
 		}{g.Id.Hex(), g.Name, g.Introduce}
 		if err := t.ExecuteTemplate(w, "main", view); err != nil {
@@ -108,11 +108,11 @@ func taskHandler(w http.ResponseWriter, r *http.Request) {
 		view := struct {
 			Thead []string
 			Tbody []struct {
-				Id string
-				Desc string
+				Id    string
+				Desc  string
 				Price string
 			}
-		} {Thead: []string{"编号", "描述", "价格", "操作"}}
+		}{Thead: []string{"编号", "描述", "价格", "操作"}}
 		if err := r.ParseForm(); err != nil {
 			flog.LogFile.Println(err)
 		}
@@ -121,7 +121,7 @@ func taskHandler(w http.ResponseWriter, r *http.Request) {
 			flog.LogFile.Println(err)
 		} else {
 			for _, v := range ts {
-				view.Tbody = append(view.Tbody, struct{Id, Desc, Price string}{v.Id.Hex(), v.Desc, strconv.Itoa(v.Price)})
+				view.Tbody = append(view.Tbody, struct{ Id, Desc, Price string }{v.Id.Hex(), v.Desc, strconv.Itoa(v.Price)})
 			}
 		}
 		if err := t.ExecuteTemplate(w, "task-table", view); err != nil {
@@ -137,10 +137,10 @@ func memberHandler(w http.ResponseWriter, r *http.Request) {
 		view := struct {
 			Thead []string
 			Tbody []struct {
-				Id string
+				Id     string
 				Mobile string
 			}
-		} {Thead: []string{"编号", "手机号", "操作"}}
+		}{Thead: []string{"编号", "手机号", "操作"}}
 		if err := r.ParseForm(); err != nil {
 			flog.LogFile.Println(err)
 		}
@@ -149,7 +149,7 @@ func memberHandler(w http.ResponseWriter, r *http.Request) {
 			flog.LogFile.Println(err)
 		} else {
 			for _, v := range ms {
-				view.Tbody = append(view.Tbody, struct{Id, Mobile string}{v.Id.Hex(), v.Mobile})
+				view.Tbody = append(view.Tbody, struct{ Id, Mobile string }{v.Id.Hex(), v.Mobile})
 			}
 		}
 		if err := t.ExecuteTemplate(w, "member-table", view); err != nil {

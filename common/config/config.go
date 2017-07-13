@@ -11,7 +11,7 @@ type config struct {
 	ConnectType string
 	RedisUrl    string
 	MongoUrl    string
-	HtmlPath string
+	HtmlPath    string
 }
 
 var ConfigVal = &config{}
@@ -21,7 +21,7 @@ func Init() {
 	if "linux" == runtime.GOOS {
 		filePath = "/root/guild/config"
 	} else {
-		filePath = "C:\\Users\\Administrator\\config"  //lxm19
+		filePath = "C:\\Users\\Administrator\\config" //lxm19
 	}
 	conf, err := ioutil.ReadFile(filePath)
 	if err != nil {
