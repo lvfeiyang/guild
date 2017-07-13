@@ -95,6 +95,8 @@ func (rsp *GuildDeleteRsp) Encode() ([]byte, error) {
 func (req *GuildDeleteReq) Handle(sess *session.Session) ([]byte, error) {
 	if bson.IsObjectIdHex(req.Id) {
 		db.DelGuildById(bson.ObjectIdHex(req.Id))
+		db.DelTasksByGId(req.Id)
+		db.DelMembersByGId(req.Id)
 	}
 	rsp := &GuildDeleteRsp{true}
 	if rspJ, err := rsp.Encode(); err != nil {

@@ -30,3 +30,6 @@ func (t *Task) GetById(id bson.ObjectId) error {
 func DelTaskById(id bson.ObjectId) error {
 	return DeleteOne(taskCName, id)
 }
+func DelTasksByGId(gId string) error {
+	return DeleteMany(taskCName, bson.M{"guildid": gId})
+}

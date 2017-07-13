@@ -28,3 +28,6 @@ func (m *Member) GetById(id bson.ObjectId) error {
 func DelMemberById(id bson.ObjectId) error {
 	return DeleteOne(memberCName, id)
 }
+func DelMembersByGId(gId string) error {
+	return DeleteMany(memberCName, bson.M{"guildid": gId})
+}

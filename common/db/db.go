@@ -98,3 +98,16 @@ func DeleteOne(cname string, id bson.ObjectId) error {
 	}
 	return nil
 }
+func DeleteMany(cname string, bm bson.M) error {
+	session, err := mgo.Dial(mongoUrl)
+	if err != nil {
+		return err
+	}
+	defer session.Close()
+
+	c := session.DB(dbName).C(cname)
+	if _, err := c.RemoveAll(bm); err != nil {
+		return err
+	}
+	return nil
+}
