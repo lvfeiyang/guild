@@ -94,7 +94,7 @@ function showTable(type)
 	})
 }
 $(function() {
-	$('body').append('<script src="guild-js/task.js"></script><script src="guild-js/member.js"></script>');
+	// $('body').append('<script src="guild-js/task.js"></script><script src="guild-js/member.js"></script>');
 	// $('body .sidebar ul li:first-child').trigger('click');
 	$('body .sidebar ul li:first-child').attr('class', 'active');
 	$('body .sidebar ul li.active a').trigger('click');
