@@ -7,7 +7,6 @@ import (
 	"github.com/lvfeiyang/guild/common/session"
 	"io/ioutil"
 	"net/http"
-	"strconv"
 	"strings"
 )
 
@@ -18,14 +17,7 @@ type Message struct {
 }
 
 func (msg *Message) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	msg.Name = r.URL.Path[len("/msg/"):] + "-req" //strings.TrimLeft(r.URL.Path, "/") + "-req"
-	if cookie, err := r.Cookie(session.CookieKey); err != nil {
-		flog.LogFile.Println(err)
-	} else {
-		if msg.SessionId, err = strconv.ParseUint(cookie.Value, 16, 64); err != nil {
-			flog.LogFile.Println(err)
-		}
-	}
+	msg.Name = r.URL.Path[len("/msg/"):] + "-req"
 	if 0 == strings.Compare("application/json", r.Header.Get("Content-Type")) {
 		defer r.Body.Close()
 		buff, err := ioutil.ReadAll(r.Body)
@@ -40,13 +32,6 @@ func (msg *Message) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusInternalServerError)
 		} else {
 			w.WriteHeader(http.StatusOK)
-			if 0 == strings.Compare("apply-session-rsp", sendMsg.Name) {
-				asRsp := &ApplySessionRsp{}
-				if err := asRsp.Decode([]byte(sendMsg.Data)); err == nil && asRsp.SessionId != 0 {
-					cookie := http.Cookie{Name: session.CookieKey, Value: strconv.FormatUint(asRsp.SessionId, 16)}
-					http.SetCookie(w, &cookie)
-				}
-			}
 		}
 		w.Write([]byte(sendMsg.Data))
 	} else {

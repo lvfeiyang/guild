@@ -4,6 +4,7 @@ import (
 	"github.com/lvfeiyang/guild/common/config"
 	"github.com/lvfeiyang/guild/common/db"
 	"github.com/lvfeiyang/guild/common/flog"
+	"github.com/lvfeiyang/guild/common/session"
 	"github.com/lvfeiyang/guild/message"
 	"gopkg.in/mgo.v2/bson"
 	"html/template"
@@ -17,7 +18,7 @@ var htmlPath string
 func main() {
 	flog.Init()
 	config.Init()
-	// session.Init()
+	session.Init()
 	db.Init()
 	htmlPath = config.ConfigVal.HtmlPath // E:\leonshare\go-workspace\src\github.com\lvfeiyang
 
@@ -46,10 +47,17 @@ func guildHandler(w http.ResponseWriter, r *http.Request) {
 		// filepath.Join(htmlPath, "guild", "html", "main.tmpl"),
 		// filepath.Join(htmlPath, "guild", "html", "task-table.tmpl"),
 		// filepath.Join(htmlPath, "guild", "html", "member-table.tmpl"),
-		filepath.Join(htmlPath, "guild", "html", "edit-guild.tmpl"),
-		filepath.Join(htmlPath, "guild", "html", "edit-task.tmpl"),
-		filepath.Join(htmlPath, "guild", "html", "edit-member.tmpl"),
+
+		filepath.Join(htmlPath, "guild", "html", "modal", "edit-guild.tmpl"),
+		filepath.Join(htmlPath, "guild", "html", "modal", "edit-member.tmpl"),
+		filepath.Join(htmlPath, "guild", "html", "modal", "edit-task.tmpl"),
+		filepath.Join(htmlPath, "guild", "html", "modal", "login.tmpl"),
 	}
+	// pattern := filepath.Join(htmlPath, "guild", "html", "modal", "*.tmpl");
+	// t, err := template.ParseGlob(pattern)
+	// if err != nil {
+	// 	flog.LogFile.Println(err)
+	// }
 	if t, err := template.ParseFiles(paths...); err != nil {
 		flog.LogFile.Println(err)
 	} else {

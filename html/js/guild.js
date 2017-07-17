@@ -93,9 +93,27 @@ function showTable(type)
 		}
 	})
 }
+function applySess()
+{
+	if (localStorage.sessionId) {
+		;
+	} else {
+		$.ajax({
+			url:'/msg/apply-session',
+			contentType:'application/json',
+			data:JSON.stringify({Device:'test'}),
+			type:'post',
+			dataType:'json',
+			success:function(data) {
+				localStorage.sessionId = data.SessionId;
+			}
+		});
+	}
+}
 $(function() {
 	// $('body').append('<script src="guild-js/task.js"></script><script src="guild-js/member.js"></script>');
 	// $('body .sidebar ul li:first-child').trigger('click');
 	$('body .sidebar ul li:first-child').attr('class', 'active');
 	$('body .sidebar ul li.active a').trigger('click');
+	applySess()
 })

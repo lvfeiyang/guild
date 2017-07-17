@@ -99,7 +99,6 @@ type Session struct {
 	N          uint64
 	VerifyCode uint32
 	Mobile     string
-	// Status     byte
 	AccountId bson.ObjectId
 }
 
@@ -150,17 +149,6 @@ func (s *Session) SetMobile(mobile string) error {
 	}
 	return nil
 }
-
-/*func (s *Session) SetStatus(status byte) error {
-	client := ConnRedis()
-	defer client.Close()
-
-	s.Status = status
-	if err := client.HSet(strconv.FormatUint(s.SessId, 10), rkStatus, s.Status).Err(); err != nil {
-		return err
-	}
-	return nil
-}*/
 func (s *Session) SetAccount(id bson.ObjectId) error {
 	client := ConnRedis()
 	defer client.Close()
@@ -181,14 +169,6 @@ func (s *Session) Apply() uint64 {
 	} else if err != nil {
 		flog.LogFile.Println(err)
 	} else {
-		s.N = rand.New(rand.NewSource(time.Now().UnixNano())).Uint64()
-		err := client.HSet(strconv.FormatUint(id, 10), rkRandomN, s.N).Err()
-		if err != nil {
-			flog.LogFile.Println(err)
-		}
-		// if err = s.SetStatus(StatusInit); err != nil {
-		// 	flog.LogFile.Println(err)
-		// }
 		if err = updateSessTime(id); err != nil {
 			flog.LogFile.Println(err)
 		}
