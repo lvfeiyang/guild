@@ -54,7 +54,75 @@ function deleteMember(memberId)
 	});
 }
 
+function sendCode()
+{
+	$.ajax({
+		url:'/msg/get-mobile-code',
+		contentType:'application/json',
+		headers:{SessionId:localStorage.sessionId},
+		data:JSON.stringify({Mobile:$('#login .modal-body #mobile').val()}),
+		type:'post',
+		dataType:'json',
+		success:function(data) {
+			// setTimeout()
+			var secs = 60;
+			var button = $('#login .modal-body #mobile').next().find('button');
+			button.attr('disabled', 'disabled');
+			button.text(secs+'秒后重发');
+			var t = setInterval(function(){
+				button.text((--secs)+'秒后重发');
+				if (0 == secs) {
+					clearInterval(t);
+					button.removeAttr('disabled');
+					button.text('发送验证码');
+				}
+			}, 1000);
+		}
+	});
+}
 function userLogin()
 {
-	
+	$.ajax({
+		url:'/msg/login',
+		contentType:'application/json',
+		headers:{SessionId:localStorage.sessionId},
+		data:JSON.stringify({VerifyCode:parseInt($('#login .modal-body #verify-code').val())}),
+		type:'post',
+		dataType:'json',
+		success:function(data) {
+			if (data.Result) {
+				$('#login').modal('hide');
+				loginButton2out();
+			}
+		}
+	});
+}
+function userLogout()
+{
+	$.ajax({
+		url:'/msg/logout',
+		contentType:'application/json',
+		headers:{SessionId:localStorage.sessionId},
+		data:JSON.stringify({Mobile:"11"}),
+		type:'post',
+		dataType:'json',
+		success:function(data) {
+			if (data.Result)
+				loginButton2in();
+		}
+	})
+}
+function loginButton2out()
+{
+	var loginButton = $('body .sidebar button');
+	loginButton.removeAttr('data-toggle').removeAttr('data-target');
+	loginButton.attr('onclick', 'userLogout()');
+	loginButton.text('登出');
+}
+function loginButton2in()
+{
+	var loginButton = $('body .sidebar button');
+	loginButton.removeAttr('onclick');
+	loginButton.attr('data-toggle', 'modal').attr('data-target', '#login');
+	loginButton.text('登入/注册');
 }

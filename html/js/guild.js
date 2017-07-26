@@ -91,12 +91,25 @@ function showTable(type)
 			$('body .main ul.nav-tabs li.active').removeClass('active');
 			$('body .main ul.nav-tabs li a[onclick*="'+type+'"]').parent().addClass('active');
 		}
-	})
+	});
 }
+
 function applySess()
 {
 	if (localStorage.sessionId) {
-		;
+		$.ajax({
+			url:'/msg/get-account',
+			contentType:'application/json',
+			headers:{SessionId:localStorage.sessionId},
+			data:JSON.stringify({SessionId:parseInt(localStorage.sessionId)}),
+			type:'post',
+			dataType:'json',
+			success:function(data) {
+				if ('' != data.AccountId) {
+					loginButton2out();
+				}
+			}
+		});
 	} else {
 		$.ajax({
 			url:'/msg/apply-session',
@@ -110,6 +123,7 @@ function applySess()
 		});
 	}
 }
+
 $(function() {
 	// $('body').append('<script src="guild-js/task.js"></script><script src="guild-js/member.js"></script>');
 	// $('body .sidebar ul li:first-child').trigger('click');

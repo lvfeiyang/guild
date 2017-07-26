@@ -99,7 +99,7 @@ type Session struct {
 	N          uint64
 	VerifyCode uint32
 	Mobile     string
-	AccountId bson.ObjectId
+	AccountId  string //bson.ObjectId
 }
 
 func (s *Session) Get(sid uint64) error {
@@ -121,7 +121,7 @@ func (s *Session) Get(sid uint64) error {
 	s.VerifyCode = uint32(vc)
 	s.Mobile, _ = smap[rkMobile]
 	if account, r := smap[rkAccount]; r {
-		s.AccountId = bson.ObjectIdHex(account)
+		s.AccountId = account//bson.ObjectIdHex(account)
 	}
 
 	return updateSessTime(sid)
@@ -153,8 +153,8 @@ func (s *Session) SetAccount(id bson.ObjectId) error {
 	client := ConnRedis()
 	defer client.Close()
 
-	s.AccountId = id
-	if err := client.HSet(strconv.FormatUint(s.SessId, 10), rkAccount, s.AccountId.Hex()).Err(); err != nil {
+	s.AccountId = id.Hex()
+	if err := client.HSet(strconv.FormatUint(s.SessId, 10), rkAccount, s.AccountId).Err(); err != nil { //.Hex()
 		return err
 	}
 	return nil
@@ -169,6 +169,11 @@ func (s *Session) Apply() uint64 {
 	} else if err != nil {
 		flog.LogFile.Println(err)
 	} else {
+		s.N = rand.New(rand.NewSource(time.Now().UnixNano())).Uint64()
+		err := client.HSet(strconv.FormatUint(id, 10), rkRandomN, s.N).Err()
+		if err != nil {
+			flog.LogFile.Println(err)
+		}
 		if err = updateSessTime(id); err != nil {
 			flog.LogFile.Println(err)
 		}

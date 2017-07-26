@@ -10,8 +10,12 @@
 				<form>
 					<div class="form-group">
 						<label for="mobile" class="control-label">Mobile:</label>
-						<input class="form-control" id="mobile">
-						<button type="button" class="btn btn-default">测试</button>
+						<div class="input-group">
+							<input class="form-control" id="mobile">
+							<span class="input-group-btn">
+								<button type="button" class="btn btn-default" onclick="sendCode()">发送验证码</button>
+							</span>
+						</div>
 					</div>
 					<div class="form-group">
 						<label for="verify-code" class="control-label">VerifyCode:</label>

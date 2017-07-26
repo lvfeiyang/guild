@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strings"
+	"strconv"
 )
 
 type Message struct {
@@ -18,6 +19,11 @@ type Message struct {
 
 func (msg *Message) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	msg.Name = r.URL.Path[len("/msg/"):] + "-req"
+	var err error
+	msg.SessionId, err = strconv.ParseUint(r.Header.Get("SessionId"), 10, 64)
+	if err != nil {
+		flog.LogFile.Println(err)
+	}
 	if 0 == strings.Compare("application/json", r.Header.Get("Content-Type")) {
 		defer r.Body.Close()
 		buff, err := ioutil.ReadAll(r.Body)
@@ -124,20 +130,18 @@ func (msg *Message) HandleMsg() *Message {
 		return handleOneMsg(&GetNReq{}, []byte(msg.Data), sess)
 	case "get-mobile-code-req":
 		return handleOneMsg(&GetMobileCodeReq{}, []byte(msg.Data), sess)
-	case "register-req":
-		msgData, err := deCrypto([]byte(msg.Data), sess)
-		if err != nil {
-			errData, _ := NormalError(ErrDeCrypto)
-			return &Message{Name: "error-msg", Data: string(errData)}
-		}
-		return handleOneMsg(&RegisterReq{}, msgData, sess)
 	case "login-req":
-		msgData, err := deCrypto([]byte(msg.Data), sess)
+		/*msgData, err := deCrypto([]byte(msg.Data), sess)
 		if err != nil {
 			errData, _ := NormalError(ErrDeCrypto)
 			return &Message{Name: "error-msg", Data: string(errData)}
 		}
-		return handleOneMsg(&LoginReq{}, msgData, sess)
+		return handleOneMsg(&LoginReq{}, msgData, sess)*/
+		return handleOneMsg(&LoginReq{}, []byte(msg.Data), sess)
+	case "logout-req":
+		return handleOneMsg(&LogoutReq{}, []byte(msg.Data), sess)
+	case "get-account-req":
+		return handleOneMsg(&GetAccountReq{}, []byte(msg.Data), sess)
 	default:
 		return &Message{Name: "error-msg", Data: UnknowMsg()}
 	}
