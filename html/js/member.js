@@ -114,14 +114,14 @@ function userLogout()
 }
 function loginButton2out()
 {
-	var loginButton = $('body .sidebar button');
+	var loginButton = $('body .sidebar button.btn-warning');
 	loginButton.removeAttr('data-toggle').removeAttr('data-target');
 	loginButton.attr('onclick', 'userLogout()');
 	loginButton.text('登出');
 }
 function loginButton2in()
 {
-	var loginButton = $('body .sidebar button');
+	var loginButton = $('body .sidebar button.btn-warning');
 	loginButton.removeAttr('onclick');
 	loginButton.attr('data-toggle', 'modal').attr('data-target', '#login');
 	loginButton.text('登入/注册');
