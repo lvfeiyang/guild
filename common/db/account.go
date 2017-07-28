@@ -1,6 +1,9 @@
 package db
 
-import "gopkg.in/mgo.v2/bson"
+import (
+	"gopkg.in/mgo.v2/bson"
+	"strings"
+)
 
 type Account struct {
 	Id     bson.ObjectId `bson:"_id,omitempty"`
@@ -18,4 +21,7 @@ func (ac *Account) GetByMobile(mobile string) error {
 }
 func (ac *Account) GetById(id bson.ObjectId) error {
 	return FindOneById(accountCName, id, ac)
+}
+func (ac *Account) IsAdmin() bool {
+	return strings.EqualFold("13917287994", ac.Mobile)
 }

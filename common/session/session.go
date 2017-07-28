@@ -121,7 +121,7 @@ func (s *Session) Get(sid uint64) error {
 	s.VerifyCode = uint32(vc)
 	s.Mobile, _ = smap[rkMobile]
 	if account, r := smap[rkAccount]; r {
-		s.AccountId = account//bson.ObjectIdHex(account)
+		s.AccountId = account //bson.ObjectIdHex(account)
 	}
 
 	return updateSessTime(sid)

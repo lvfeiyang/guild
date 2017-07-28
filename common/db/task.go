@@ -8,6 +8,8 @@ type Task struct {
 	Price    int
 	DeadLine int64
 	GuildId  string
+	Client string
+	Recipient []string
 }
 
 const taskCName = "task"

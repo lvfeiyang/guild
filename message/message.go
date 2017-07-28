@@ -7,8 +7,8 @@ import (
 	"github.com/lvfeiyang/guild/common/session"
 	"io/ioutil"
 	"net/http"
-	"strings"
 	"strconv"
+	"strings"
 )
 
 type Message struct {

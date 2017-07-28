@@ -6,18 +6,19 @@ import (
 )
 
 const (
-	ErrNoVerify       = 1
-	ErrDecode         = 2
-	ErrUnknow         = 3
-	ErrNoSession      = 4
-	ErrGetSessionFail = 5
-	ErrUnknowMsg      = 6
-	ErrUsedClientN    = 7
-	ErrDeCrypto       = 8
-	ErrVerifyCode     = 9
-	ErrPwdWrong       = 10
-	ErrHavenRegister  = 11
-	ErrNoUser         = 12
+	_ = iota
+	ErrNoVerify
+	ErrDecode
+	ErrUnknow
+	ErrNoSession
+	ErrGetSessionFail
+	ErrUnknowMsg
+	ErrUsedClientN
+	ErrDeCrypto
+	ErrVerifyCode
+	ErrPwdWrong
+	ErrHavenRegister
+	ErrNoUser
 )
 
 var CodeMsgMap = map[uint32]string{

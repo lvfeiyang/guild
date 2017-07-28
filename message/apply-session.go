@@ -6,8 +6,8 @@ import (
 )
 
 type ApplySessionReq struct {
-	Device  string
-	Ip string
+	Device string
+	Ip     string
 }
 type ApplySessionRsp struct {
 	SessionId uint64

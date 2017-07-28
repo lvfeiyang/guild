@@ -5,10 +5,19 @@ import "gopkg.in/mgo.v2/bson"
 type Member struct {
 	Id      bson.ObjectId `bson:"_id,omitempty"`
 	Mobile  string
+	Ability string
+	Name string
 	GuildId string
+	Role byte
+	Accounts []string
 }
 
 const memberCName = "member"
+
+const (
+	RoleMaster = 1<<iota
+	RoleAdmin
+)
 
 func (m *Member) Save() error {
 	m.Id = bson.NewObjectId()

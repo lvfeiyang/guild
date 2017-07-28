@@ -9,7 +9,7 @@ import (
 
 type GetMobileCodeReq struct {
 	// SessionId uint64 `json:"-"`
-	Mobile    string
+	Mobile string
 }
 
 func (req *GetMobileCodeReq) GetName() (string, string) {

@@ -60,7 +60,7 @@ func (req *LoginReq) Handle(sess *session.Session) ([]byte, error) {
 		return NormalError(ErrVerifyCode)
 	}
 	ac := &db.Account{}
-	if err := ac.GetByMobile(sess.Mobile); (err != nil && "not found" != err.Error()) {
+	if err := ac.GetByMobile(sess.Mobile); err != nil && "not found" != err.Error() {
 		return nil, err
 	} else {
 		if ac.Id == "" {
