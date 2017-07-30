@@ -4,7 +4,7 @@ import "gopkg.in/mgo.v2/bson"
 
 type Member struct {
 	Id      bson.ObjectId `bson:"_id,omitempty"`
-	Mobile  string
+	Mobile  string  //TODO: same account
 	Ability string
 	Name string
 	GuildId string

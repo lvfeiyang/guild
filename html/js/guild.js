@@ -68,6 +68,8 @@ function showOnRight(guildId)
 			$('body .sidebar ul li.active').removeClass('active');
 			$('body .sidebar ul li a[onclick*="'+guildId+'"]').parent().addClass('active');
 			$('body .main ul.nav-tabs li.active a').trigger('click');
+
+			//TODO 限制一部分功能
 		}
 	});
 }
@@ -83,6 +85,7 @@ function showTable(type)
 	guildId = $('body .main .page-header span').text();
 	$.ajax({
 		url:url,
+		headers:{SessionId:localStorage.sessionId}, //TODO 带上session 已判断成员角色
 		data:{Id:guildId},
 		type:'get',
 		dataType:'html',
