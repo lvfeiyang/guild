@@ -143,9 +143,9 @@ func memberHandler(w http.ResponseWriter, r *http.Request) {
 		flog.LogFile.Println(err)
 	} else {
 		type oneview struct {
-			Id     string
-			Name string
-			Mobile string
+			Id      string
+			Name    string
+			Mobile  string
 			Ability string
 		}
 		view := struct {

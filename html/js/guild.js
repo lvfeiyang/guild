@@ -132,5 +132,6 @@ $(function() {
 	// $('body .sidebar ul li:first-child').trigger('click');
 	$('body .sidebar ul li:first-child').attr('class', 'active');
 	$('body .sidebar ul li.active a').trigger('click');
+	// $('#deadlinepicker').datetimepicker();
 	applySess()
 })

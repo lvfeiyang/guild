@@ -3,19 +3,19 @@ package db
 import "gopkg.in/mgo.v2/bson"
 
 type Member struct {
-	Id      bson.ObjectId `bson:"_id,omitempty"`
-	Mobile  string  //TODO: same account
-	Ability string
-	Name string
-	GuildId string
-	Role byte
+	Id       bson.ObjectId `bson:"_id,omitempty"`
+	Mobile   string        //TODO: same account
+	Ability  string
+	Name     string
+	GuildId  string
+	Role     byte
 	Accounts []string
 }
 
 const memberCName = "member"
 
 const (
-	RoleMaster = 1<<iota
+	RoleMaster = 1 << iota
 	RoleAdmin
 )
 
@@ -25,10 +25,10 @@ func (m *Member) Save() error {
 }
 func (m *Member) UpdateById() error {
 	u := bson.M{
-		"mobile": m.Mobile,
+		"mobile":  m.Mobile,
 		"ability": m.Ability,
-		"name": m.Name,
-		"role": m.Role,
+		"name":    m.Name,
+		"role":    m.Role,
 	}
 	return UpdateOne(memberCName, m.Id, bson.M{"$set": u})
 }

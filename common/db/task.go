@@ -3,12 +3,12 @@ package db
 import "gopkg.in/mgo.v2/bson"
 
 type Task struct {
-	Id       bson.ObjectId `bson:"_id,omitempty"`
-	Desc     string
-	Price    int
-	DeadLine int64
-	GuildId  string
-	Client string
+	Id        bson.ObjectId `bson:"_id,omitempty"`
+	Desc      string
+	Price     int
+	DeadLine  int64
+	GuildId   string
+	Client    string
 	Recipient []string
 }
 
@@ -19,7 +19,8 @@ func (t *Task) Save() error {
 	return Create(taskCName, t)
 }
 func (t *Task) UpdateById() error {
-	return UpdateOne(taskCName, t.Id, bson.M{"$set": bson.M{"desc": t.Desc, "price": t.Price}})
+	ud := bson.M{"desc": t.Desc, "price": t.Price, "deadline": t.DeadLine}
+	return UpdateOne(taskCName, t.Id, bson.M{"$set": ud})
 }
 func FindAllTasks(gId string) ([]Task, error) {
 	var ts []Task

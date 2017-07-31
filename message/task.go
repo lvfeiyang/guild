@@ -12,8 +12,9 @@ type TaskInfoReq struct {
 	Id string
 }
 type TaskInfoRsp struct {
-	Price string
-	Desc  string
+	Price    string
+	Desc     string
+	DeadLine int64
 }
 
 func (req *TaskInfoReq) GetName() (string, string) {
@@ -30,7 +31,7 @@ func (req *TaskInfoReq) Handle(sess *session.Session) ([]byte, error) {
 	if bson.IsObjectIdHex(req.Id) {
 		(&t).GetById(bson.ObjectIdHex(req.Id))
 	}
-	rsp := &TaskInfoRsp{strconv.Itoa(t.Price), t.Desc}
+	rsp := &TaskInfoRsp{strconv.Itoa(t.Price), t.Desc, t.DeadLine}
 	if rspJ, err := rsp.Encode(); err != nil {
 		return nil, err
 	} else {
@@ -39,10 +40,11 @@ func (req *TaskInfoReq) Handle(sess *session.Session) ([]byte, error) {
 }
 
 type TaskSaveReq struct {
-	Id      string
-	Price   int
-	Desc    string
-	GuildId string
+	Id       string
+	Price    int
+	Desc     string
+	DeadLine int64
+	GuildId  string
 }
 type TaskSaveRsp struct {
 	Result bool
@@ -59,12 +61,12 @@ func (rsp *TaskSaveRsp) Encode() ([]byte, error) {
 }
 func (req *TaskSaveReq) Handle(sess *session.Session) ([]byte, error) {
 	if bson.IsObjectIdHex(req.Id) {
-		t := &db.Task{Id: bson.ObjectIdHex(req.Id), Price: req.Price, Desc: req.Desc, GuildId: req.GuildId}
+		t := &db.Task{Id: bson.ObjectIdHex(req.Id), Price: req.Price, Desc: req.Desc, GuildId: req.GuildId, DeadLine: req.DeadLine}
 		if err := t.UpdateById(); err != nil {
 			return nil, err
 		}
 	} else {
-		t := &db.Task{Price: req.Price, Desc: req.Desc, GuildId: req.GuildId}
+		t := &db.Task{Price: req.Price, Desc: req.Desc, GuildId: req.GuildId, DeadLine: req.DeadLine}
 		if err := t.Save(); err != nil {
 			return nil, err
 		}

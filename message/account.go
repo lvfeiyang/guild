@@ -14,7 +14,7 @@ type GetAccountReq struct {
 
 type GetAccountRsp struct {
 	AccountId string
-	Role byte
+	Role      byte
 }
 
 func (req *GetAccountReq) GetName() (string, string) {
