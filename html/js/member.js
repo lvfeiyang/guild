@@ -11,12 +11,18 @@ $('#editMember').on('show.bs.modal', function (event) {
 			dataType:'json',
 			success:function(data) {
 				modal.find('#editMemberLabel').text("修改成员");
+				modal.find('#member-name').val(data.Name);
 				modal.find('#member-mobile').val(data.Mobile);
+				modal.find('#member-ability').val(data.Ability);
+				modal.find('#member-role').val(data.Role);
 			}
 		});
 	} else {
 		modal.find('#editMemberLabel').text("新成员");
 		modal.find('#member-mobile').val("");
+		modal.find('#member-name').val("");
+		modal.find('#member-ability').val("");
+		modal.find('#member-role').val(0);
 	}
 	modal.find('.modal-footer .btn-primary').attr('onclick', "saveMember('"+memberId+"')");
 })
@@ -25,6 +31,9 @@ function saveMember(memberId)
 	var data = {
 		Id:memberId,
 		Mobile:$('#editMember .modal-body #member-mobile').val(),
+		Name:$('#editMember .modal-body #member-name').val(),
+		Ability:$('#editMember .modal-body #member-ability').val(),
+		Role:parseInt($('#editMember .modal-body #member-role').val()),
 		GuildId:$('body .main .page-header span').text()
 	};
 	$.ajax({

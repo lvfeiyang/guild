@@ -11,7 +11,10 @@ type MemberInfoReq struct {
 	Id string
 }
 type MemberInfoRsp struct {
+	Name string
 	Mobile string
+	Ability string
+	Role byte
 }
 
 func (req *MemberInfoReq) GetName() (string, string) {
@@ -28,7 +31,7 @@ func (req *MemberInfoReq) Handle(sess *session.Session) ([]byte, error) {
 	if bson.IsObjectIdHex(req.Id) {
 		(&m).GetById(bson.ObjectIdHex(req.Id))
 	}
-	rsp := &MemberInfoRsp{m.Mobile}
+	rsp := &MemberInfoRsp{m.Name, m.Mobile, m.Ability, m.Role}
 	if rspJ, err := rsp.Encode(); err != nil {
 		return nil, err
 	} else {
@@ -38,8 +41,11 @@ func (req *MemberInfoReq) Handle(sess *session.Session) ([]byte, error) {
 
 type MemberSaveReq struct {
 	Id      string
-	Mobile  string
 	GuildId string
+	Name string
+	Mobile  string
+	Ability string
+	Role byte
 }
 type MemberSaveRsp struct {
 	Result bool
@@ -56,12 +62,12 @@ func (rsp *MemberSaveRsp) Encode() ([]byte, error) {
 }
 func (req *MemberSaveReq) Handle(sess *session.Session) ([]byte, error) {
 	if bson.IsObjectIdHex(req.Id) {
-		m := &db.Member{Id: bson.ObjectIdHex(req.Id), Mobile: req.Mobile, GuildId: req.GuildId}
+		m := &db.Member{Id: bson.ObjectIdHex(req.Id), Mobile: req.Mobile, GuildId: req.GuildId, Name: req.Name, Ability: req.Ability, Role:req.Role}
 		if err := m.UpdateById(); err != nil {
 			return nil, err
 		}
 	} else {
-		m := &db.Member{Mobile: req.Mobile, GuildId: req.GuildId}
+		m := &db.Member{Mobile: req.Mobile, GuildId: req.GuildId, Name: req.Name, Ability: req.Ability, Role:req.Role}
 		if err := m.Save(); err != nil {
 			return nil, err
 		}

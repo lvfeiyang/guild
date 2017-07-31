@@ -10,8 +10,9 @@
 	<tbody>
 		{{range .Tbody}}
 		<tr>
-			<td>{{.Id}}</td>
+			<td>{{.Name}}</td>
 			<td>{{.Mobile}}</td>
+			<td>{{.Ability}}</td>
 			<td>
 				<a href="#" data-toggle="modal" data-target="#editMember" data-member-id={{.Id}}><span class="glyphicon glyphicon-pencil"></span></a>
 				<a href="#" onclick="deleteMember({{.Id}})"><span class="glyphicon glyphicon-remove"></span></a>

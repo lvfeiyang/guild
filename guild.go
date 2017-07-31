@@ -142,13 +142,16 @@ func memberHandler(w http.ResponseWriter, r *http.Request) {
 	if t, err := template.ParseFiles(filepath.Join(htmlPath, "guild", "html", "member-table.tmpl")); err != nil {
 		flog.LogFile.Println(err)
 	} else {
+		type oneview struct {
+			Id     string
+			Name string
+			Mobile string
+			Ability string
+		}
 		view := struct {
 			Thead []string
-			Tbody []struct {
-				Id     string
-				Mobile string
-			}
-		}{Thead: []string{"编号", "手机号", "操作"}}
+			Tbody []oneview
+		}{Thead: []string{"姓名", "手机号", "能力", "操作"}}
 		if err := r.ParseForm(); err != nil {
 			flog.LogFile.Println(err)
 		}
@@ -157,7 +160,7 @@ func memberHandler(w http.ResponseWriter, r *http.Request) {
 			flog.LogFile.Println(err)
 		} else {
 			for _, v := range ms {
-				view.Tbody = append(view.Tbody, struct{ Id, Mobile string }{v.Id.Hex(), v.Mobile})
+				view.Tbody = append(view.Tbody, oneview{v.Id.Hex(), v.Name, v.Mobile, v.Ability})
 			}
 		}
 		if err := t.ExecuteTemplate(w, "member-table", view); err != nil {

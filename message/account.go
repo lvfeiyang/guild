@@ -27,7 +27,7 @@ func (rsp *GetAccountRsp) Encode() ([]byte, error) {
 	return json.Marshal(rsp)
 }
 func (req *GetAccountReq) Handle(sess *session.Session) ([]byte, error) {
-	rsp := &GetAccountRsp{sess.AccountId}
+	rsp := &GetAccountRsp{sess.AccountId, 0}
 	// if sess.AccountId.Valid() {
 	// 	rsp.AccountId = sess.AccountId.Hex()
 	// }

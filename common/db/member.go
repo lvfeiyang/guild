@@ -24,7 +24,13 @@ func (m *Member) Save() error {
 	return Create(memberCName, m)
 }
 func (m *Member) UpdateById() error {
-	return UpdateOne(memberCName, m.Id, bson.M{"$set": bson.M{"mobile": m.Mobile}})
+	u := bson.M{
+		"mobile": m.Mobile,
+		"ability": m.Ability,
+		"name": m.Name,
+		"role": m.Role,
+	}
+	return UpdateOne(memberCName, m.Id, bson.M{"$set": u})
 }
 func FindAllMembers(gId string) ([]Member, error) {
 	var ms []Member
