@@ -135,3 +135,33 @@ function loginButton2in()
 	loginButton.attr('data-toggle', 'modal').attr('data-target', '#login');
 	loginButton.text('登入/注册');
 }
+function roleDoc()
+{
+
+}
+function roleChgDoc(role) //role able!
+{
+	//nil role
+	if (role) {
+		//RoleSysAdmin
+		if (1 & role) {
+
+		} else {
+
+		}
+		//RoleMaster
+		if (2 & role) {
+
+		} else {
+
+		}
+		//RoleAdmin
+		if (4 & role) {
+
+		} else {
+
+		}
+	} else {
+		
+	}
+}

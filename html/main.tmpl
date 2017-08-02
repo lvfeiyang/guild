@@ -2,10 +2,16 @@
 <div class="page-header clearfix">
 	<nav>
 		<ul class="nav nav-pills pull-right">
+			{{if haveRole .Role 2}}
 			<li role="presentation"><a href="#" data-toggle="modal" data-target="#editGuild" data-guild-id={{.Id}}>编辑</a></li>
+			{{end}}
+			{{if haveRole .Role 1}}
 			<li role="presentation"><a href="#" onclick="deleteGuild({{.Id}})">删除</a></li>
+			{{end}}
+			{{if haveRole .Role 4}}
 			<li role="presentation"><a href="#" data-toggle="modal" data-target="#editMember" data-member-id="0">添加成员</a></li>
 			<li role="presentation"><a href="#" data-toggle="modal" data-target="#editTask" data-task-id="0">添加任务</a></li>
+			{{end}}
 		</ul>
 	</nav>
 	<span class="hidden">{{.Id}}</span>

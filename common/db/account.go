@@ -22,6 +22,6 @@ func (ac *Account) GetByMobile(mobile string) error {
 func (ac *Account) GetById(id bson.ObjectId) error {
 	return FindOneById(accountCName, id, ac)
 }
-func (ac *Account) IsAdmin() bool {
+func (ac *Account) IsSysAdmin() bool {
 	return strings.EqualFold("13917287994", ac.Mobile)
 }

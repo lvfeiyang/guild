@@ -60,6 +60,7 @@ function showOnRight(guildId)
 {
 	$.ajax({
 		url:'/guild/detail',
+		headers:{SessionId:localStorage.sessionId},
 		data:{Id:guildId},
 		type:'get',
 		dataType:'html',
@@ -104,7 +105,10 @@ function applySess()
 			url:'/msg/get-account',
 			contentType:'application/json',
 			headers:{SessionId:localStorage.sessionId},
-			data:JSON.stringify({SessionId:parseInt(localStorage.sessionId)}),
+			data:JSON.stringify({
+				SessionId:parseInt(localStorage.sessionId),
+				GuildId:$('body .main .page-header span').text() //取不到
+			}),
 			type:'post',
 			dataType:'json',
 			success:function(data) {

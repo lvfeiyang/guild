@@ -4,12 +4,13 @@ import (
 	"encoding/json"
 	"github.com/lvfeiyang/guild/common/db"
 	"github.com/lvfeiyang/guild/common/session"
-	// "gopkg.in/mgo.v2/bson"
+	"gopkg.in/mgo.v2/bson"
 )
 
 //get-account
 type GetAccountReq struct {
 	SessionId uint64
+	GuildId string
 }
 
 type GetAccountRsp struct {
@@ -31,6 +32,26 @@ func (req *GetAccountReq) Handle(sess *session.Session) ([]byte, error) {
 	// if sess.AccountId.Valid() {
 	// 	rsp.AccountId = sess.AccountId.Hex()
 	// }
+	if bson.IsObjectIdHex(sess.AccountId) {
+		//其实为对外的功能权限
+		a := db.Account{}
+		if err := (&a).GetById(bson.ObjectIdHex(sess.AccountId)); err != nil {
+			return nil, err
+		}
+		if (&a).IsSysAdmin() {
+			rsp.Role = db.RoleSysAdmin | db.RoleAdmin | db.RoleMaster
+		} else {
+			if r, err := db.RoleByAccount(a.Id.Hex(), req.GuildId); err != nil {
+				return nil, err //TODO 考虑使用panic recover defer
+			} else {
+				if db.RoleMaster == r {
+					rsp.Role = db.RoleMaster | db.RoleAdmin
+				} else {
+					rsp.Role = r
+				}
+			}
+		}
+	}
 	if rspJ, err := rsp.Encode(); err != nil {
 		return nil, err
 	} else {

@@ -15,8 +15,10 @@ type Member struct {
 const memberCName = "member"
 
 const (
-	RoleMaster = 1 << iota
+	RoleSysAdmin = 1 << iota
+	RoleMaster
 	RoleAdmin
+	RoleNormal
 )
 
 func (m *Member) Save() error {
@@ -45,4 +47,16 @@ func DelMemberById(id bson.ObjectId) error {
 }
 func DelMembersByGId(gId string) error {
 	return DeleteMany(memberCName, bson.M{"guildid": gId})
+}
+func RoleByAccount(aId, gId string) (byte, error) {
+	var ms []Member
+	if err := FindMany(memberCName, bson.M{"accounts": aId, "guildid": gId}, &ms); err != nil {
+		return 0, err
+	} else {
+		var role byte
+		for _, m := range ms {
+			role |= m.Role
+		}
+		return role, nil
+	}
 }
