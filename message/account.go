@@ -4,7 +4,8 @@ import (
 	"encoding/json"
 	"github.com/lvfeiyang/guild/common/db"
 	"github.com/lvfeiyang/guild/common/session"
-	"gopkg.in/mgo.v2/bson"
+	// "gopkg.in/mgo.v2/bson"
+	"strconv"
 )
 
 //get-account
@@ -32,7 +33,7 @@ func (req *GetAccountReq) Handle(sess *session.Session) ([]byte, error) {
 	// if sess.AccountId.Valid() {
 	// 	rsp.AccountId = sess.AccountId.Hex()
 	// }
-	if bson.IsObjectIdHex(sess.AccountId) {
+	/*if bson.IsObjectIdHex(sess.AccountId) {
 		//其实为对外的功能权限
 		a := db.Account{}
 		if err := (&a).GetById(bson.ObjectIdHex(sess.AccountId)); err != nil {
@@ -51,7 +52,8 @@ func (req *GetAccountReq) Handle(sess *session.Session) ([]byte, error) {
 				}
 			}
 		}
-	}
+	}*/
+	rsp.Role, _ = db.RoleAble(strconv.FormatUint(sess.SessId, 10), req.GuildId)
 	if rspJ, err := rsp.Encode(); err != nil {
 		return nil, err
 	} else {

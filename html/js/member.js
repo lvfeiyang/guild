@@ -102,6 +102,7 @@ function userLogin()
 			if (data.Result) {
 				$('#login').modal('hide');
 				loginButton2out();
+				window.location.reload();
 			}
 		}
 	});
@@ -117,7 +118,8 @@ function userLogout()
 		dataType:'json',
 		success:function(data) {
 			if (data.Result)
-				loginButton2in();
+				window.location.reload();
+				// loginButton2in();
 		}
 	})
 }
@@ -162,6 +164,6 @@ function roleChgDoc(role) //role able!
 
 		}
 	} else {
-		
+
 	}
 }

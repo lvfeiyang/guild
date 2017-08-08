@@ -1,6 +1,10 @@
 package db
 
-import "gopkg.in/mgo.v2/bson"
+import (
+	"gopkg.in/mgo.v2/bson"
+	"github.com/lvfeiyang/guild/common/session"
+	"strconv"
+)
 
 type Member struct {
 	Id       bson.ObjectId `bson:"_id,omitempty"`
@@ -48,7 +52,7 @@ func DelMemberById(id bson.ObjectId) error {
 func DelMembersByGId(gId string) error {
 	return DeleteMany(memberCName, bson.M{"guildid": gId})
 }
-func RoleByAccount(aId, gId string) (byte, error) {
+func roleByAccount(aId, gId string) (byte, error) {
 	var ms []Member
 	if err := FindMany(memberCName, bson.M{"accounts": aId, "guildid": gId}, &ms); err != nil {
 		return 0, err
@@ -59,4 +63,37 @@ func RoleByAccount(aId, gId string) (byte, error) {
 		}
 		return role, nil
 	}
+}
+func RoleAble(sId, gId string) (role byte, err error) {
+	role = 0
+	err = nil
+	var sIdi uint64
+	sIdi, err = strconv.ParseUint(sId, 10, 64)
+	if err == nil {
+		sess := &session.Session{SessId: sIdi}
+		if 0 != sIdi {
+			err = sess.Get(sIdi)
+		}
+		if err == nil && bson.IsObjectIdHex(sess.AccountId) {
+			//其实为对外的功能权限
+			a := Account{}
+			err = (&a).GetById(bson.ObjectIdHex(sess.AccountId))
+			if err == nil {
+				if (&a).IsSysAdmin() {
+					role = RoleSysAdmin | RoleAdmin | RoleMaster | RoleNormal
+				} else {
+					role, err = roleByAccount(a.Id.Hex(), gId)
+					if err == nil {
+						if 0 != role {
+							role |= RoleNormal
+						}
+						if RoleMaster == role {
+							role |= RoleAdmin
+						}
+					}
+				}
+			}
+		}
+	}
+	return
 }

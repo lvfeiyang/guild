@@ -8,15 +8,20 @@
 		</tr>
 	</thead>
 	<tbody>
+		{{$Role := .Role}}
 		{{range .Tbody}}
 		<tr>
 			<td>{{.Id}}</td>
 			<td>{{.Desc}}</td>
 			<td>{{.Price}}</td>
 			<td>
+				{{if haveRole $Role 4}}
 				<a href="#" data-toggle="modal" data-target="#editTask" data-task-id={{.Id}}><span class="glyphicon glyphicon-pencil"></span></a>
 				<a href="#" onclick="deleteTask({{.Id}})"><span class="glyphicon glyphicon-remove"></span></a>
+				{{end}}
+				{{if haveRole $Role 8}}
 				<a href="#"><span class="glyphicon glyphicon-file"></span></a>
+				{{end}}
 			</td>
 		</tr>
 		{{end}}

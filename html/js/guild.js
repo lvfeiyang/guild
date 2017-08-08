@@ -115,6 +115,11 @@ function applySess()
 				if ('' != data.AccountId) {
 					loginButton2out();
 				}
+				if (data.Role & 1) {
+					$('body .sidebar ul li:last-child').removeClass('hidden').addClass('show');
+				} else {
+					$('body .sidebar ul li:last-child').removeClass('show').addClass('hidden');
+				}
 			}
 		});
 	} else {

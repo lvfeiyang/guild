@@ -81,38 +81,8 @@ func guildHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 }
-func roleAble(sId, gId string) (role byte, err error) {
-	role = 0
-	err = nil
-	var sIdi uint64
-	sIdi, err = strconv.ParseUint(sId, 10, 64)
-	if err == nil {
-		sess := &session.Session{SessId: sIdi}
-		if 0 != sIdi {
-			err = sess.Get(sIdi)
-		}
-		if err == nil && bson.IsObjectIdHex(sess.AccountId) {
-			//其实为对外的功能权限
-			a := db.Account{}
-			err = (&a).GetById(bson.ObjectIdHex(sess.AccountId))
-			if err == nil {
-				if (&a).IsSysAdmin() {
-					role = db.RoleSysAdmin | db.RoleAdmin | db.RoleMaster
-				} else {
-					role, err = db.RoleByAccount(a.Id.Hex(), gId)
-					if err == nil {
-						if db.RoleMaster == role {
-							role |= db.RoleAdmin
-						}
-					}
-				}
-			}
-		}
-	}
-	return
-}
 func haveRole(all, one byte) bool {
-	return 0 != all & one
+	return 0 != all&one
 }
 func guildDetailHandler(w http.ResponseWriter, r *http.Request) {
 	paths := []string{
@@ -121,7 +91,7 @@ func guildDetailHandler(w http.ResponseWriter, r *http.Request) {
 		// filepath.Join(htmlPath, "guild", "html", "member-table.tmpl"),
 	}
 	if t, err := template.New("main").Funcs(
-		template.FuncMap{"haveRole":haveRole,}).ParseFiles(paths...); err != nil {
+		template.FuncMap{"haveRole": haveRole}).ParseFiles(paths...); err != nil {
 		flog.LogFile.Println(err)
 	} else {
 		if err := r.ParseForm(); err != nil {
@@ -132,7 +102,7 @@ func guildDetailHandler(w http.ResponseWriter, r *http.Request) {
 		if bson.IsObjectIdHex(id) {
 			(&g).GetById(bson.ObjectIdHex(id))
 		}
-		role, err := roleAble(r.Header.Get("SessionId"), id)
+		role, err := db.RoleAble(r.Header.Get("SessionId"), id)
 		if err != nil {
 			flog.LogFile.Println(err)
 		}
@@ -140,7 +110,7 @@ func guildDetailHandler(w http.ResponseWriter, r *http.Request) {
 			Id        string
 			Name      string
 			Introduce string
-			Role byte
+			Role      byte
 		}{g.Id.Hex(), g.Name, g.Introduce, role}
 		if err := t.ExecuteTemplate(w, "main", view); err != nil {
 			flog.LogFile.Println(err)
@@ -149,7 +119,8 @@ func guildDetailHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 func taskHandler(w http.ResponseWriter, r *http.Request) {
-	if t, err := template.ParseFiles(filepath.Join(htmlPath, "guild", "html", "task-table.tmpl")); err != nil {
+	if t, err := template.New("task").Funcs(template.FuncMap{"haveRole": haveRole}).
+		ParseFiles(filepath.Join(htmlPath, "guild", "html", "task-table.tmpl")); err != nil {
 		flog.LogFile.Println(err)
 	} else {
 		view := struct {
@@ -172,7 +143,7 @@ func taskHandler(w http.ResponseWriter, r *http.Request) {
 				view.Tbody = append(view.Tbody, struct{ Id, Desc, Price string }{v.Id.Hex(), v.Desc, strconv.Itoa(v.Price)})
 			}
 		}
-		role, err := roleAble(r.Header.Get("SessionId"), gId)
+		role, err := db.RoleAble(r.Header.Get("SessionId"), gId)
 		if err != nil {
 			flog.LogFile.Println(err)
 		}
@@ -184,7 +155,8 @@ func taskHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 func memberHandler(w http.ResponseWriter, r *http.Request) {
-	if t, err := template.ParseFiles(filepath.Join(htmlPath, "guild", "html", "member-table.tmpl")); err != nil {
+	if t, err := template.New("member").Funcs(template.FuncMap{"haveRole": haveRole}).
+		ParseFiles(filepath.Join(htmlPath, "guild", "html", "member-table.tmpl")); err != nil {
 		flog.LogFile.Println(err)
 	} else {
 		type oneview struct {
@@ -196,6 +168,7 @@ func memberHandler(w http.ResponseWriter, r *http.Request) {
 		view := struct {
 			Thead []string
 			Tbody []oneview
+			Role  byte
 		}{Thead: []string{"姓名", "手机号", "能力", "操作"}}
 		if err := r.ParseForm(); err != nil {
 			flog.LogFile.Println(err)
@@ -208,6 +181,11 @@ func memberHandler(w http.ResponseWriter, r *http.Request) {
 				view.Tbody = append(view.Tbody, oneview{v.Id.Hex(), v.Name, v.Mobile, v.Ability})
 			}
 		}
+		role, err := db.RoleAble(r.Header.Get("SessionId"), gId)
+		if err != nil {
+			flog.LogFile.Println(err)
+		}
+		view.Role = role
 		if err := t.ExecuteTemplate(w, "member-table", view); err != nil {
 			flog.LogFile.Println(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)

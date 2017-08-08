@@ -8,14 +8,19 @@
 		</tr>
 	</thead>
 	<tbody>
+		{{$Role := .Role}}
 		{{range .Tbody}}
 		<tr>
 			<td>{{.Name}}</td>
 			<td>{{.Mobile}}</td>
 			<td>{{.Ability}}</td>
 			<td>
+				{{if haveRole $Role 4}}
 				<a href="#" data-toggle="modal" data-target="#editMember" data-member-id={{.Id}}><span class="glyphicon glyphicon-pencil"></span></a>
+				{{end}}
+				{{if haveRole $Role 2}}
 				<a href="#" onclick="deleteMember({{.Id}})"><span class="glyphicon glyphicon-remove"></span></a>
+				{{end}}
 			</td>
 		</tr>
 		{{end}}
