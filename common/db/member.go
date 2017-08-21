@@ -1,8 +1,9 @@
 package db
 
 import (
-	"gopkg.in/mgo.v2/bson"
+	"errors"
 	"github.com/lvfeiyang/guild/common/session"
+	"gopkg.in/mgo.v2/bson"
 	"strconv"
 )
 
@@ -37,6 +38,16 @@ func (m *Member) UpdateById() error {
 		"role":    m.Role,
 	}
 	return UpdateOne(memberCName, m.Id, bson.M{"$set": u})
+}
+func (m *Member) AddAccountById(accId string) error {
+	if bson.IsObjectIdHex(accId) {
+		u := bson.M{
+			"accounts": accId,
+		}
+		return UpdateOne(memberCName, m.Id, bson.M{"$addToSet": u})
+	} else {
+		return errors.New("invalid account")
+	}
 }
 func FindAllMembers(gId string) ([]Member, error) {
 	var ms []Member

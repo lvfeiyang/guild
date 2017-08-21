@@ -61,16 +61,24 @@ func (rsp *MemberSaveRsp) Encode() ([]byte, error) {
 	return json.Marshal(rsp)
 }
 func (req *MemberSaveReq) Handle(sess *session.Session) ([]byte, error) {
+	var m *db.Member
 	if bson.IsObjectIdHex(req.Id) {
-		m := &db.Member{Id: bson.ObjectIdHex(req.Id), Mobile: req.Mobile, GuildId: req.GuildId, Name: req.Name, Ability: req.Ability, Role: req.Role}
+		m = &db.Member{Id: bson.ObjectIdHex(req.Id), Mobile: req.Mobile, GuildId: req.GuildId, Name: req.Name, Ability: req.Ability, Role: req.Role}
 		if err := m.UpdateById(); err != nil {
 			return nil, err
 		}
 	} else {
-		m := &db.Member{Mobile: req.Mobile, GuildId: req.GuildId, Name: req.Name, Ability: req.Ability, Role: req.Role}
+		m = &db.Member{Mobile: req.Mobile, GuildId: req.GuildId, Name: req.Name, Ability: req.Ability, Role: req.Role}
 		if err := m.Save(); err != nil {
 			return nil, err
 		}
+	}
+	ac := &db.Account{}
+	if err := ac.GetByMobile(req.Mobile); err != nil && "not found" != err.Error() {
+		return nil, err
+	}
+	if err := m.AddAccountById(ac.Id.Hex()); err != nil {
+		return nil, err
 	}
 	rsp := &MemberSaveRsp{true}
 	if rspJ, err := rsp.Encode(); err != nil {

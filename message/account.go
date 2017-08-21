@@ -11,7 +11,7 @@ import (
 //get-account
 type GetAccountReq struct {
 	SessionId uint64
-	GuildId string
+	GuildId   string
 }
 
 type GetAccountRsp struct {

@@ -70,7 +70,12 @@ function showOnRight(guildId)
 			$('body .sidebar ul li a[onclick*="'+guildId+'"]').parent().addClass('active');
 			$('body .main ul.nav-tabs li.active a').trigger('click');
 
-			//TODO 限制一部分功能
+			var role = parseInt($('body .main #role').text());
+			if (role & 2) {
+				$('#editMember #member-role').parent().removeClass('hidden').addClass('show');
+			} else {
+				$('#editMember #member-role').parent().removeClass('show').addClass('hidden');
+			}
 		}
 	});
 }
@@ -86,7 +91,7 @@ function showTable(type)
 	guildId = $('body .main .page-header span').text();
 	$.ajax({
 		url:url,
-		headers:{SessionId:localStorage.sessionId}, //TODO 带上session 已判断成员角色
+		headers:{SessionId:localStorage.sessionId},
 		data:{Id:guildId},
 		type:'get',
 		dataType:'html',
