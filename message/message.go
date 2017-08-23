@@ -20,9 +20,11 @@ type Message struct {
 func (msg *Message) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	msg.Name = r.URL.Path[len("/msg/"):] + "-req"
 	var err error
-	msg.SessionId, err = strconv.ParseUint(r.Header.Get("SessionId"), 10, 64)
-	if err != nil {
-		flog.LogFile.Println(err)
+	if headSessId := r.Header.Get("SessionId"); "" != headSessId {
+		msg.SessionId, err = strconv.ParseUint(headSessId, 10, 64)
+		if err != nil {
+			flog.LogFile.Println(err)
+		}
 	}
 	if 0 == strings.Compare("application/json", r.Header.Get("Content-Type")) {
 		defer r.Body.Close()
