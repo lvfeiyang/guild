@@ -2,10 +2,10 @@ package db
 
 import (
 	"errors"
+	"github.com/lvfeiyang/proxy/common/db"
 	"github.com/lvfeiyang/proxy/common/session"
 	"gopkg.in/mgo.v2/bson"
 	"strconv"
-	"github.com/lvfeiyang/proxy/common/db"
 )
 
 type Member struct {

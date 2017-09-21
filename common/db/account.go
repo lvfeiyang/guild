@@ -1,9 +1,9 @@
 package db
 
 import (
+	"github.com/lvfeiyang/proxy/common/db"
 	"gopkg.in/mgo.v2/bson"
 	"strings"
-	"github.com/lvfeiyang/proxy/common/db"
 )
 
 type Account struct {

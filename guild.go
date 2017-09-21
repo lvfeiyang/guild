@@ -1,13 +1,13 @@
 package main
 
 import (
+	gDb "github.com/lvfeiyang/guild/common/db"
+	"github.com/lvfeiyang/guild/message"
+	"github.com/lvfeiyang/proxy/common"
 	"github.com/lvfeiyang/proxy/common/config"
 	"github.com/lvfeiyang/proxy/common/db"
-	gDb "github.com/lvfeiyang/guild/common/db"
 	"github.com/lvfeiyang/proxy/common/flog"
 	"github.com/lvfeiyang/proxy/common/session"
-	"github.com/lvfeiyang/proxy/common"
-	"github.com/lvfeiyang/guild/message"
 	"gopkg.in/mgo.v2/bson"
 	"html/template"
 	"net/http"
