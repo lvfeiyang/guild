@@ -3,8 +3,8 @@ package message
 import (
 	"encoding/json"
 	// "fmt"
-	"github.com/lvfeiyang/guild/common/session"
-	// "github.com/lvfeiyang/guild/common/sm"
+	"github.com/lvfeiyang/proxy/common/session"
+	// "github.com/lvfeiyang/proxy/common/sm"
 )
 
 type GetMobileCodeReq struct {

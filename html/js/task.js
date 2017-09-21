@@ -4,7 +4,7 @@ $('#editTask').on('show.bs.modal', function (event) {
 	var modal = $(this);
 	if (0 != taskId) {
 		$.ajax({
-			url:'/msg/task-info',
+			url:'/guild/msg/task-info',
 			contentType:'application/json',
 			data:JSON.stringify({Id:taskId}),
 			type:'post',
@@ -38,7 +38,7 @@ function saveTask(taskId)
 		GuildId:$('body .main .page-header span').text()
 	};
 	$.ajax({
-		url:'/msg/task-save',
+		url:'/guild/msg/task-save',
 		contentType: 'application/json',
 		data:JSON.stringify(data),
 		type:'post',
@@ -52,7 +52,7 @@ function saveTask(taskId)
 function deleteTask(taskId)
 {
 	$.ajax({
-		url:'/msg/task-delete',
+		url:'/guild/msg/task-delete',
 		contentType:'application/json',
 		data:JSON.stringify({Id:taskId}),
 		type:'post',

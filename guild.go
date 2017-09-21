@@ -1,10 +1,12 @@
 package main
 
 import (
-	"github.com/lvfeiyang/guild/common/config"
-	"github.com/lvfeiyang/guild/common/db"
-	"github.com/lvfeiyang/guild/common/flog"
-	"github.com/lvfeiyang/guild/common/session"
+	"github.com/lvfeiyang/proxy/common/config"
+	"github.com/lvfeiyang/proxy/common/db"
+	gDb "github.com/lvfeiyang/guild/common/db"
+	"github.com/lvfeiyang/proxy/common/flog"
+	"github.com/lvfeiyang/proxy/common/session"
+	"github.com/lvfeiyang/proxy/common"
 	"github.com/lvfeiyang/guild/message"
 	"gopkg.in/mgo.v2/bson"
 	"html/template"
@@ -14,50 +16,56 @@ import (
 )
 
 var htmlPath string
+var pjtCfg config.ProjectConfig
 
 func main() {
 	flog.Init()
 	config.Init()
 	session.Init()
 	db.Init()
-	htmlPath = config.ConfigVal.HtmlPath // E:\leonshare\go-workspace\src\github.com\lvfeiyang
+	message.Init()
+	httpAddr := ":80"
+	htmlPath = config.ConfigVal.HtmlPath
+	if pjtCfg = config.GetProjectConfig("guild"); "" == pjtCfg.Name {
+		flog.LogFile.Fatal("no guild project!")
+	}
 
-	jsFiles, cssFiles, fontsFiles := filepath.Join(htmlPath, "sfk", "js"), filepath.Join(htmlPath, "sfk", "css"), filepath.Join(htmlPath, "sfk", "fonts")
+	if !pjtCfg.Proxy {
+		jsFiles, cssFiles, fontsFiles := filepath.Join(htmlPath, "sfk", "js"), filepath.Join(htmlPath, "sfk", "css"), filepath.Join(htmlPath, "sfk", "fonts")
+		http.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir(jsFiles))))
+		http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir(cssFiles))))
+		http.Handle("/fonts/", http.StripPrefix("/fonts/", http.FileServer(http.Dir(fontsFiles))))
+
+		http.Handle("/guild/msg/", &message.LocMessage{})
+	} else {
+		httpAddr = pjtCfg.Http
+	}
+
 	gcssFiles := filepath.Join(htmlPath, "guild", "html", "css")
 	gjsFiles := filepath.Join(htmlPath, "guild", "html", "js")
-	http.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir(jsFiles))))
-	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir(cssFiles))))
-	http.Handle("/fonts/", http.StripPrefix("/fonts/", http.FileServer(http.Dir(fontsFiles))))
-	http.Handle("/guild-css/", http.StripPrefix("/guild-css/", http.FileServer(http.Dir(gcssFiles))))
-	http.Handle("/guild-js/", http.StripPrefix("/guild-js/", http.FileServer(http.Dir(gjsFiles))))
+	http.Handle("/guild/css/", http.StripPrefix("/guild/css/", http.FileServer(http.Dir(gcssFiles))))
+	http.Handle("/guild/js/", http.StripPrefix("/guild/js/", http.FileServer(http.Dir(gjsFiles))))
 
-	http.Handle("/msg/", &message.Message{}) //guild-save
+	go common.ListenTcp(pjtCfg.Tcp, message.MhMap)
 
 	http.HandleFunc("/guild", guildHandler)
 	http.HandleFunc("/guild/detail", guildDetailHandler)
-	http.HandleFunc("/task", taskHandler)
-	http.HandleFunc("/member", memberHandler)
+	http.HandleFunc("/guild/task", taskHandler)
+	http.HandleFunc("/guild/member", memberHandler)
 
-	flog.LogFile.Fatal(http.ListenAndServe(":80", nil))
+	flog.LogFile.Fatal(http.ListenAndServe(httpAddr, nil))
 }
 func guildHandler(w http.ResponseWriter, r *http.Request) {
 	paths := []string{
 		filepath.Join(htmlPath, "guild", "html", "guild.html"),
 		filepath.Join(htmlPath, "guild", "html", "sidebar.tmpl"),
-		// filepath.Join(htmlPath, "guild", "html", "main.tmpl"),
-		// filepath.Join(htmlPath, "guild", "html", "task-table.tmpl"),
-		// filepath.Join(htmlPath, "guild", "html", "member-table.tmpl"),
 
 		filepath.Join(htmlPath, "guild", "html", "modal", "edit-guild.tmpl"),
 		filepath.Join(htmlPath, "guild", "html", "modal", "edit-member.tmpl"),
 		filepath.Join(htmlPath, "guild", "html", "modal", "edit-task.tmpl"),
 		filepath.Join(htmlPath, "guild", "html", "modal", "login.tmpl"),
 	}
-	// pattern := filepath.Join(htmlPath, "guild", "html", "modal", "*.tmpl");
-	// t, err := template.ParseGlob(pattern)
-	// if err != nil {
-	// 	flog.LogFile.Println(err)
-	// }
+
 	if t, err := template.ParseFiles(paths...); err != nil {
 		flog.LogFile.Println(err)
 	} else {
@@ -67,14 +75,13 @@ func guildHandler(w http.ResponseWriter, r *http.Request) {
 				Name string
 			}
 		}
-		gs, err := db.FindAllGuilds()
+		gs, err := gDb.FindAllGuilds()
 		if err != nil {
 			flog.LogFile.Println(err)
 		}
 		for _, v := range gs {
 			view.GuildList = append(view.GuildList, struct{ Id, Name string }{v.Id.Hex(), v.Name})
 		}
-		//t.ExecuteTemplate(w, "sidebar", struct{GuildList []oneViewGuild}{viewGuildList})
 		if err := t.Execute(w, view); err != nil {
 			flog.LogFile.Println(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -87,8 +94,6 @@ func haveRole(all, one byte) bool {
 func guildDetailHandler(w http.ResponseWriter, r *http.Request) {
 	paths := []string{
 		filepath.Join(htmlPath, "guild", "html", "main.tmpl"),
-		// filepath.Join(htmlPath, "guild", "html", "task-table.tmpl"),
-		// filepath.Join(htmlPath, "guild", "html", "member-table.tmpl"),
 	}
 	if t, err := template.New("main").Funcs(
 		template.FuncMap{"haveRole": haveRole}).ParseFiles(paths...); err != nil {
@@ -98,11 +103,11 @@ func guildDetailHandler(w http.ResponseWriter, r *http.Request) {
 			flog.LogFile.Println(err)
 		}
 		id := r.Form.Get("Id")
-		g := db.Guild{}
+		g := gDb.Guild{}
 		if bson.IsObjectIdHex(id) {
 			(&g).GetById(bson.ObjectIdHex(id))
 		}
-		role, err := db.RoleAble(r.Header.Get("SessionId"), id)
+		role, err := gDb.RoleAble(r.Header.Get("SessionId"), id)
 		if err != nil {
 			flog.LogFile.Println(err)
 		}
@@ -136,14 +141,14 @@ func taskHandler(w http.ResponseWriter, r *http.Request) {
 			flog.LogFile.Println(err)
 		}
 		gId := r.Form.Get("Id")
-		if ts, err := db.FindAllTasks(gId); err != nil {
+		if ts, err := gDb.FindAllTasks(gId); err != nil {
 			flog.LogFile.Println(err)
 		} else {
 			for _, v := range ts {
 				view.Tbody = append(view.Tbody, struct{ Id, Desc, Price string }{v.Id.Hex(), v.Desc, strconv.Itoa(v.Price)})
 			}
 		}
-		role, err := db.RoleAble(r.Header.Get("SessionId"), gId)
+		role, err := gDb.RoleAble(r.Header.Get("SessionId"), gId)
 		if err != nil {
 			flog.LogFile.Println(err)
 		}
@@ -174,14 +179,14 @@ func memberHandler(w http.ResponseWriter, r *http.Request) {
 			flog.LogFile.Println(err)
 		}
 		gId := r.Form.Get("Id")
-		if ms, err := db.FindAllMembers(gId); err != nil {
+		if ms, err := gDb.FindAllMembers(gId); err != nil {
 			flog.LogFile.Println(err)
 		} else {
 			for _, v := range ms {
 				view.Tbody = append(view.Tbody, oneview{v.Id.Hex(), v.Name, v.Mobile, v.Ability})
 			}
 		}
-		role, err := db.RoleAble(r.Header.Get("SessionId"), gId)
+		role, err := gDb.RoleAble(r.Header.Get("SessionId"), gId)
 		if err != nil {
 			flog.LogFile.Println(err)
 		}

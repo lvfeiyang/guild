@@ -3,6 +3,7 @@ package db
 import (
 	"gopkg.in/mgo.v2/bson"
 	"strings"
+	"github.com/lvfeiyang/proxy/common/db"
 )
 
 type Account struct {
@@ -14,13 +15,13 @@ const accountCName = "account"
 
 func (ac *Account) Save() error {
 	ac.Id = bson.NewObjectId()
-	return Create(accountCName, ac)
+	return db.Create(accountCName, ac)
 }
 func (ac *Account) GetByMobile(mobile string) error {
-	return FindOne(accountCName, bson.M{"mobile": mobile}, ac)
+	return db.FindOne(accountCName, bson.M{"mobile": mobile}, ac)
 }
 func (ac *Account) GetById(id bson.ObjectId) error {
-	return FindOneById(accountCName, id, ac)
+	return db.FindOneById(accountCName, id, ac)
 }
 func (ac *Account) IsSysAdmin() bool {
 	return strings.EqualFold("13917287994", ac.Mobile)

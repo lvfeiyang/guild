@@ -3,7 +3,8 @@ package message
 import (
 	"encoding/json"
 	"github.com/lvfeiyang/guild/common/db"
-	"github.com/lvfeiyang/guild/common/session"
+	"github.com/lvfeiyang/proxy/common/session"
+	"github.com/lvfeiyang/proxy/message"
 	// "gopkg.in/mgo.v2/bson"
 	"strconv"
 )
@@ -81,7 +82,7 @@ func (rsp *LoginRsp) Encode() ([]byte, error) {
 }
 func (req *LoginReq) Handle(sess *session.Session) ([]byte, error) {
 	if req.VerifyCode != sess.VerifyCode {
-		return NormalError(ErrVerifyCode)
+		return message.NormalError(message.ErrVerifyCode)
 	}
 	ac := &db.Account{}
 	if err := ac.GetByMobile(sess.Mobile); err != nil && "not found" != err.Error() {

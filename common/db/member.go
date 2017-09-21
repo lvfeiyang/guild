@@ -2,9 +2,10 @@ package db
 
 import (
 	"errors"
-	"github.com/lvfeiyang/guild/common/session"
+	"github.com/lvfeiyang/proxy/common/session"
 	"gopkg.in/mgo.v2/bson"
 	"strconv"
+	"github.com/lvfeiyang/proxy/common/db"
 )
 
 type Member struct {
@@ -28,7 +29,7 @@ const (
 
 func (m *Member) Save() error {
 	m.Id = bson.NewObjectId()
-	return Create(memberCName, m)
+	return db.Create(memberCName, m)
 }
 func (m *Member) UpdateById() error {
 	u := bson.M{
@@ -37,35 +38,35 @@ func (m *Member) UpdateById() error {
 		"name":    m.Name,
 		"role":    m.Role,
 	}
-	return UpdateOne(memberCName, m.Id, bson.M{"$set": u})
+	return db.UpdateOne(memberCName, m.Id, bson.M{"$set": u})
 }
 func (m *Member) AddAccountById(accId string) error {
 	if bson.IsObjectIdHex(accId) {
 		u := bson.M{
 			"accounts": accId,
 		}
-		return UpdateOne(memberCName, m.Id, bson.M{"$addToSet": u})
+		return db.UpdateOne(memberCName, m.Id, bson.M{"$addToSet": u})
 	} else {
 		return errors.New("invalid account")
 	}
 }
 func FindAllMembers(gId string) ([]Member, error) {
 	var ms []Member
-	err := FindMany(memberCName, bson.M{"guildid": gId}, &ms)
+	err := db.FindMany(memberCName, bson.M{"guildid": gId}, &ms, "")
 	return ms, err
 }
 func (m *Member) GetById(id bson.ObjectId) error {
-	return FindOneById(memberCName, id, m)
+	return db.FindOneById(memberCName, id, m)
 }
 func DelMemberById(id bson.ObjectId) error {
-	return DeleteOne(memberCName, id)
+	return db.DeleteOne(memberCName, id)
 }
 func DelMembersByGId(gId string) error {
-	return DeleteMany(memberCName, bson.M{"guildid": gId})
+	return db.DeleteMany(memberCName, bson.M{"guildid": gId})
 }
 func roleByAccount(aId, gId string) (byte, error) {
 	var ms []Member
-	if err := FindMany(memberCName, bson.M{"accounts": aId, "guildid": gId}, &ms); err != nil {
+	if err := db.FindMany(memberCName, bson.M{"accounts": aId, "guildid": gId}, &ms, ""); err != nil {
 		return 0, err
 	} else {
 		var role byte

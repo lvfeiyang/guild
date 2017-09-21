@@ -4,7 +4,7 @@ $('#editMember').on('show.bs.modal', function (event) {
 	var modal = $(this);
 	if (0 != memberId) {
 		$.ajax({
-			url:'/msg/member-info',
+			url:'/guild/msg/member-info',
 			contentType:'application/json',
 			data:JSON.stringify({Id:memberId}),
 			type:'post',
@@ -37,7 +37,7 @@ function saveMember(memberId)
 		GuildId:$('body .main .page-header span').text()
 	};
 	$.ajax({
-		url:'/msg/member-save',
+		url:'/guild/msg/member-save',
 		contentType: 'application/json',
 		data:JSON.stringify(data),
 		type:'post',
@@ -51,7 +51,7 @@ function saveMember(memberId)
 function deleteMember(memberId)
 {
 	$.ajax({
-		url:'/msg/member-delete',
+		url:'/guild/msg/member-delete',
 		contentType:'application/json',
 		data:JSON.stringify({Id:memberId}),
 		type:'post',
@@ -66,7 +66,7 @@ function deleteMember(memberId)
 function sendCode()
 {
 	$.ajax({
-		url:'/msg/get-mobile-code',
+		url:'/guild/msg/get-mobile-code',
 		contentType:'application/json',
 		headers:{SessionId:localStorage.sessionId},
 		data:JSON.stringify({Mobile:$('#login .modal-body #mobile').val()}),
@@ -92,7 +92,7 @@ function sendCode()
 function userLogin()
 {
 	$.ajax({
-		url:'/msg/login',
+		url:'/guild/msg/login',
 		contentType:'application/json',
 		headers:{SessionId:localStorage.sessionId},
 		data:JSON.stringify({VerifyCode:parseInt($('#login .modal-body #verify-code').val())}),
@@ -110,7 +110,7 @@ function userLogin()
 function userLogout()
 {
 	$.ajax({
-		url:'/msg/logout',
+		url:'/guild/msg/logout',
 		contentType:'application/json',
 		headers:{SessionId:localStorage.sessionId},
 		data:JSON.stringify({Mobile:"11"}),

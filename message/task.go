@@ -3,7 +3,7 @@ package message
 import (
 	"encoding/json"
 	"github.com/lvfeiyang/guild/common/db"
-	"github.com/lvfeiyang/guild/common/session"
+	"github.com/lvfeiyang/proxy/common/session"
 	"gopkg.in/mgo.v2/bson"
 	"strconv"
 )

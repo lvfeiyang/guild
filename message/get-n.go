@@ -3,7 +3,8 @@ package message
 import (
 	"encoding/binary"
 	"encoding/json"
-	"github.com/lvfeiyang/guild/common/session"
+	"github.com/lvfeiyang/proxy/common/session"
+	"github.com/lvfeiyang/proxy/message"
 )
 
 type GetNReq struct {
@@ -34,9 +35,9 @@ func (req *GetNReq) Handle(sess *session.Session) ([]byte, error) {
 		return NormalError(ErrGetSessionFail)
 	}*/
 	rsp := &GetNRsp{RandomN: sess.N}
-	nKey := NewKey(sess.N)
+	nKey := message.NewKey(sess.N)
 
-	sign, err := Sign(rsp.SignData(), nKey)
+	sign, err := message.Sign(rsp.SignData(), nKey)
 	if err != nil {
 		return nil, err
 	}
@@ -45,5 +46,5 @@ func (req *GetNReq) Handle(sess *session.Session) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	return AesEn(rspJ, nKey)
+	return message.AesEn(rspJ, nKey)
 }

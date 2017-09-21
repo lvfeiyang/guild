@@ -5,7 +5,7 @@ $('#editGuild').on('show.bs.modal', function (event) {
 	//ajax here
 	if (0 != guildId) {
 		$.ajax({
-			url:'/msg/guild-info',
+			url:'/guild/msg/guild-info',
 			contentType:'application/json',
 			data:JSON.stringify({Id:guildId}),
 			type:'post',
@@ -31,7 +31,7 @@ function saveGuild(guildId)
 		Introduce:$('#editGuild .modal-body #guild-introduce').val()
 	};
 	$.ajax({
-		url:'/msg/guild-save',
+		url:'/guild/msg/guild-save',
 		contentType: 'application/json',
 		data:JSON.stringify(data),
 		type:'post',
@@ -45,7 +45,7 @@ function saveGuild(guildId)
 function deleteGuild(guildId)
 {
 	$.ajax({
-		url:'/msg/guild-delete',
+		url:'/guild/msg/guild-delete',
 		contentType:'application/json',
 		data:JSON.stringify({Id:guildId}),
 		type:'post',
@@ -82,9 +82,9 @@ function showOnRight(guildId)
 function showTable(type)
 {
 	if (1 == type) {
-		url = '/member';
+		url = '/guild/member';
 	} else if (2 == type) {
-		url = '/task';
+		url = '/guild/task';
 	} else {
 		return;
 	}
@@ -107,7 +107,7 @@ function applySess()
 {
 	if (localStorage.sessionId) {
 		$.ajax({
-			url:'/msg/get-account',
+			url:'/guild/msg/get-account',
 			contentType:'application/json',
 			headers:{SessionId:localStorage.sessionId},
 			data:JSON.stringify({
@@ -129,7 +129,7 @@ function applySess()
 		});
 	} else {
 		$.ajax({
-			url:'/msg/apply-session',
+			url:'/guild/msg/apply-session',
 			contentType:'application/json',
 			data:JSON.stringify({Device:'test'}),
 			type:'post',
@@ -142,10 +142,7 @@ function applySess()
 }
 
 $(function() {
-	// $('body').append('<script src="guild-js/task.js"></script><script src="guild-js/member.js"></script>');
-	// $('body .sidebar ul li:first-child').trigger('click');
 	$('body .sidebar ul li:first-child').attr('class', 'active');
 	$('body .sidebar ul li.active a').trigger('click');
-	// $('#deadlinepicker').datetimepicker();
 	applySess()
 })

@@ -2,7 +2,8 @@ package message
 
 import (
 	"encoding/json"
-	"github.com/lvfeiyang/guild/common/session"
+	"github.com/lvfeiyang/proxy/common/session"
+	"github.com/lvfeiyang/proxy/message"
 )
 
 type ApplySessionReq struct {
@@ -32,7 +33,7 @@ func (req *ApplySessionReq) Handle(sess *session.Session) ([]byte, error) {
 	s := &session.Session{}
 	sid := s.Apply()
 	if 0 == sid {
-		return NormalError(ErrNoSession)
+		return message.NormalError(message.ErrNoSession)
 	}
 	rsp := &ApplySessionRsp{SessionId: sid}
 	rspJ, err := rsp.Encode()
