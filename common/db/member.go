@@ -52,7 +52,7 @@ func (m *Member) AddAccountById(accId string) error {
 }
 func FindAllMembers(gId string) ([]Member, error) {
 	var ms []Member
-	err := db.FindMany(memberCName, bson.M{"guildid": gId}, &ms, "")
+	err := db.FindMany(memberCName, bson.M{"guildid": gId}, &ms, db.Option{})
 	return ms, err
 }
 func (m *Member) GetById(id bson.ObjectId) error {
@@ -66,7 +66,7 @@ func DelMembersByGId(gId string) error {
 }
 func roleByAccount(aId, gId string) (byte, error) {
 	var ms []Member
-	if err := db.FindMany(memberCName, bson.M{"accounts": aId, "guildid": gId}, &ms, ""); err != nil {
+	if err := db.FindMany(memberCName, bson.M{"accounts": aId, "guildid": gId}, &ms, db.Option{}); err != nil {
 		return 0, err
 	} else {
 		var role byte

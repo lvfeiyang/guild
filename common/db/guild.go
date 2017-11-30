@@ -25,7 +25,7 @@ func (g *Guild) UpdateById() error {
 func FindAllGuilds() ([]Guild, error) {
 	var gs []Guild
 	// gs := make([]Guild, 20)
-	err := db.FindMany(guildCName, bson.M{}, &gs, "")
+	err := db.FindMany(guildCName, bson.M{}, &gs, db.Option{})
 	return gs, err
 }
 func DelGuildById(id bson.ObjectId) error {

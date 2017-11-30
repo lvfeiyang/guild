@@ -25,7 +25,7 @@ func (t *Task) UpdateById() error {
 }
 func FindAllTasks(gId string) ([]Task, error) {
 	var ts []Task
-	err := db.FindMany(taskCName, bson.M{"guildid": gId}, &ts, "")
+	err := db.FindMany(taskCName, bson.M{"guildid": gId}, &ts, db.Option{})
 	return ts, err
 }
 func (t *Task) GetById(id bson.ObjectId) error {
